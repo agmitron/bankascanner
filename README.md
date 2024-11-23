@@ -38,9 +38,9 @@ npm run test -- tinkoff # will test tinkoff.test.ts
 
 ## Supported banks
 
-— [x] Kapitalbank 
-— [ ] Tinkoff (coming coon)
-— [ ] Sberbank (coming coon)
-— [ ] Jusan (coming coon)
-— [ ] TBC 
-— [ ] Kaspi
+- [x] Kapitalbank 
+- [ ] Tinkoff (coming coon)
+- [ ] Sberbank (coming coon)
+- [ ] Jusan (coming coon)
+- [ ] TBC 
+- [ ] Kaspi
