@@ -4,21 +4,25 @@ A tool to convert your PDF bank statements to more convenient formats as JSON, C
 
 ## Usage
 
-```
+```bash
 npx tsx ./index.ts --in path/to/in.pdf --out path/to/out.json --bank=<bank_name>
 ```
 
 ## Development
 
+### Installation
+
 To install the dependencies: 
 
-```
+```bash
 npm i
 ```
 
+### Debugging 
+
 To generate a preview from PDF text for debugging, run: 
 
-```
+```bash
 npx tsx ./pdf2text.ts --in path/to/in.pdf --out path/to/out.txt
 ```
 
