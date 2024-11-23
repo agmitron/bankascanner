@@ -42,5 +42,5 @@ npm run test -- tinkoff # will test tinkoff.test.ts
 - [ ] Tinkoff (coming coon)
 - [ ] Sberbank (coming coon)
 - [ ] Jusan (coming coon)
-- [ ] TBC 
-- [ ] Kaspi
+- [ ] TBC (coming coon)
+- [ ] Kaspi (coming coon)
