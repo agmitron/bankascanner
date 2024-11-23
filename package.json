@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "start": "tsx index.ts",
+    "test": "vitest",
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/yargs": "^17.0.33",
+    "tsx": "^4.19.2",
+    "typescript": "^5.5.4",
+    "vite-tsconfig-paths": "^5.1.1",
+    "vitest": "^2.1.4"
+  },
+  "dependencies": {
+    "@types/pdf-parse": "1.1.4",
+    "fs": "^0.0.1-security",
+    "patch-package": "^8.0.0",
+    "pdf-parse": "1.1.1",
+    "yargs": "^17.7.2"
+  }
+}
