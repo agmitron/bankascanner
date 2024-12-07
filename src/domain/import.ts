@@ -23,6 +23,7 @@ export interface Importer {
 /**
  * Versioner is responsible for guessing the version of the
  * statement and choosing the appropriate importer.
+ * @template V - the supported versions that the versioner can handle.
  */
 export interface Versioner<V extends string> {
   /**
