@@ -1,8 +1,8 @@
-import type { Exporter } from "~/entities/exporter";
-import type { Row } from "~/entities/row";
+import type { Exporter } from "~/domain/export";
+import type { Row } from "~/domain/row";
 
 export class JSONExporter implements Exporter {
-    export(data: Row[]): Promise<Buffer> {
-        return Promise.resolve(Buffer.from(JSON.stringify(data, null, 2)));
-    }
+	export(data: Row[]): Promise<Buffer> {
+		return Promise.resolve(Buffer.from(JSON.stringify(data, null, 2)));
+	}
 }

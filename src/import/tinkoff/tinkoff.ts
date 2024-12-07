@@ -1,10 +1,9 @@
-import type { Importer } from "~/entities/importer";
-import type { Row } from "~/entities/row";
-import { ddmmyyyy } from "~/utils/date";
 import pdf2data from "pdf-parse";
+import type { Importer } from "~/domain/import";
+import type { Row } from "~/domain/row";
+import { ddmmyyyy } from "~/utils/date";
 
 // date for correct data match
-
 const FAKE_DATA = `10.10.1010
 08:32`;
 

@@ -2,14 +2,28 @@ import fs from "fs/promises";
 import yargs from "yargs";
 import path from "path";
 import { hideBin } from "yargs/helpers";
-import { KapitalBank } from "~/import/kapitalbank/kapitalbank";
-import { Tinkoff } from "~/import/tinkoff/tinkoff";
+import * as kapitalbank from "~/import/kapitalbank";
 import { JSONExporter } from "~/export/json";
+import {
+  DEFAULT_VERSION,
+  UnknownVersionError,
+  UnknownBankError,
+  Version,
+  Versioner,
+} from "~/domain/import";
 
-const importers = {
-  kapitalbank: new KapitalBank(),
-  tinkoff: new Tinkoff(),
+const versioners: Record<string, Versioner<Version<string>>> = {
+  kapitalbank: new kapitalbank.Versioner(),
 } as const;
+
+const getVersioner = (bank: string) => {
+  const versioner = versioners[bank];
+  if (!versioner) {
+    throw new UnknownBankError(bank);
+  }
+
+  return versioner;
+}
 
 const exporters = {
   json: new JSONExporter(),
@@ -22,16 +36,24 @@ const argv = yargs(hideBin(process.argv))
     bank: {
       type: "string",
       demandOption: true,
-      choices: Object.keys(importers),
+      choices: Object.keys(versioners),
     },
+    version: { type: "string", alias: "v" },
+  })
+  .check((argv) => {
+    const versioner = getVersioner(argv.bank);
+
+    const version = argv.version || DEFAULT_VERSION;
+    if (!versioner.supported.includes(version)) {
+      throw new UnknownVersionError(version, argv.bank);
+    }
+
+    return true;
   })
   .parseSync();
 
 async function main() {
-  const importer = importers[argv.bank as keyof typeof importers];
-  if (!importer) {
-    throw new Error("Unknown bank " + argv.bank);
-  }
+  const versioner = getVersioner(argv.bank);
 
   const exportFormat = argv.out.split(".").pop();
   if (exportFormat !== "json") {
@@ -44,6 +66,9 @@ async function main() {
   }
 
   const pdfFile = await fs.readFile(path.resolve(__dirname, argv.in));
+
+  const v = argv.version || (await versioner.guess(pdfFile));
+  const importer = versioner.choose(v);
 
   const rows = await importer.import(pdfFile);
   const buffer = await exporter.export(rows);
