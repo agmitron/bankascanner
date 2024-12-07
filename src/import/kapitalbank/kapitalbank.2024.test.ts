@@ -1,14 +1,14 @@
 import pdf from "pdf-parse";
 import * as fs from "fs/promises";
 import { test, describe, expect } from "vitest";
-import { KapitalBank } from "./kapitalbank";
-import { Row } from "~/entities/row";
+import { KapitalBankV2024 } from "./kapitalbank.2024";
+import { Row } from "~/domain/row";
 import { ddmmyyyy } from "~/utils/date";
-import { Category } from "~/entities/category";
+import { Category } from "~/domain/category";
 import path from "path";
 
 describe("Kapitalbank", () => {
-  const instance = new KapitalBank();
+  const instance = new KapitalBankV2024();
 
   test("_split", () => {
     const given = `

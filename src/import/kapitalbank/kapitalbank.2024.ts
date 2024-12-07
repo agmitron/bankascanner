@@ -1,13 +1,13 @@
 import { writeFile } from "fs/promises";
 import pdf2data from "pdf-parse";
 import path from "path";
-import { Importer } from "~/entities/importer";
-import { Row } from "~/entities/row";
+import { Importer } from "~/domain/import";
+import { Row } from "~/domain/row";
 import {
   Category,
   CategoryDetectors,
   detectCategory,
-} from "~/entities/category";
+} from "~/domain/category";
 
 const categoryDetectors: CategoryDetectors = new Map([
   ["other", [(s) => true]],
@@ -28,7 +28,10 @@ interface Extractor {
   index: number;
 }
 
-export class KapitalBank implements Importer {
+/**
+ * Parses KapitalBank statements of the 2024 version.
+ */
+export class KapitalBankV2024 implements Importer {
   private _profile: Profile | null = null;
 
   public async import(file: Buffer): Promise<Row[]> {

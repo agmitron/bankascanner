@@ -1,6 +1,6 @@
 import { Result } from "pdf-parse";
-import { Importer } from "~/entities/importer";
-import { Row } from "~/entities/row";
+import { Importer } from "~/domain/import";
+import { Row } from "~/domain/row";
 
 export class Tinkoff implements Importer {
     import(file: Buffer): Promise<Row[]> {
