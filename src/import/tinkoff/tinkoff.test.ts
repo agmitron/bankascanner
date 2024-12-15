@@ -83,7 +83,24 @@ describe("Tinkoff", () => {
     expect(actual).toMatchObject(expected);
     expect(actual.length).toBe(expected.length)
   });
+test ("_extractInfo", () => {
+  const given = `23.11.2024
+  19:05
+  23.11.2024
+  19:06
+  +3 000.00 ₽+3 000.00 ₽Пополнение. Система
+  быстрых платежей
+  1734`;
+  const expected: Row = {date: ddmmyyyy('23.11.2024', '19:06:00'),
+    value: +3000.00,
+    category: "other",
+    comment: "Пополнение. Система быстрых платежей 1734",
+    currency: "RUB",};
 
+    const actual = instance["_extractInfo"](given);
+
+    expect(actual).toMatchObject(expected);
+})
   test("parse", async () => {
     const expected10firstRows: Row[] = [
       {

@@ -1,6 +1,7 @@
 import { Result } from "pdf-parse";
 import { Importer } from "~/entities/importer";
 import { Row } from "~/entities/row";
+import { ddmmyyyy } from "~/utils/date";
 
 //date for correct data match
 
@@ -28,6 +29,44 @@ export class Tinkoff implements Importer {
         const pieces: string[] = piecesArray.map((subarray) => subarray[0].trim());
 
         return pieces;
+
+    }
+    private _extractInfo(input: string): Row {
+        // Пример входных данных
+        input = `23.11.2024
+        19:05
+        23.11.2024
+        19:06
+        +3 000.00 ₽+3 000.00 ₽Пополнение. Система
+        быстрых платежей
+        1734`;
+    
+        const regex = /((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s\d+.\d{2})\s(.)){2}((.*\n)*)/gm;
+        const match = input.match(regex);
+    
+        if (!match) {
+            throw new Error("Input does not match the expected format");
+        }
+    
+        // Извлечение данных
+        const dateStr = match[0]; // Первая дата
+        const valueStr = match[4]; //
+        const comment = match[6].split('\n').slice(4).join(' ').trim(); // Извлекаем комментарий
+        const currency = "RUB"; // Предполагаем, что валюта фиксирована
+    
+        // Преобразование строки значений в число
+        const value = parseFloat(valueStr.replace(/[\s₽]/g, ''));
+    
+        // Формируем объект Row
+        const row: Row = {
+            date: new Date(dateStr.split('.').reverse().join('-')), // Преобразуем строку даты в объект Date
+            value: value,
+            category: "other", // Здесь можно добавить логику для определения категории
+            comment: comment,
+            currency: currency,
+        };
+    
+        return row;
 
     }
 }
