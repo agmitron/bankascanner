@@ -31,17 +31,9 @@ export class Tinkoff implements Importer {
         return pieces;
 
     }
+
     private _extractInfo(input: string): Row {
-        // Пример входных данных
-        input = `23.11.2024
-        19:05
-        23.11.2024
-        19:06
-        +3 000.00 ₽+3 000.00 ₽Пополнение. Система
-        быстрых платежей
-        1734`;
-    
-        const regex = /((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s\d+.\d{2})\s(.)){2}((.*\n)*)/gm;
+        const regex = /((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s\d+.\d{2})\s(.)){2}((.*\n)*)/
         const match = input.match(regex);
     
         if (!match) {

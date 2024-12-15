@@ -43,64 +43,67 @@ describe("Tinkoff", () => {
     Онлайн`;
 
     const expected = [
-        `23.11.2024
+      `23.11.2024
     19:05
     23.11.2024
     19:06
     +3 000.00 ₽+3 000.00 ₽Пополнение. Система
     быстрых платежей
     1734`,
-    `18.11.2024
+      `18.11.2024
     23:42
     18.11.2024
     23:42
     -99.00 ₽-99.00 ₽Плата за обслуживание—`,
-    `02.11.2024
+      `02.11.2024
     06:58
     02.11.2024
     06:58
     -15 000.00 ₽-15 000.00 ₽Внутренний перевод на
     договор 5397095018
     1734`,
-    `01.11.2024
+      `01.11.2024
     10:07
     01.11.2024
     10:07
     +10 000.00 ₽+10 000.00 ₽Пополнение. Система
     быстрых платежей
     1734`,
-    `01.11.2024
+      `01.11.2024
     08:32
     01.11.2024
     08:32
     +10 000.00 ₽+10 000.00 ₽Пополнение. Сбербанк
     Онлайн`,
-
     ];
 
     const actual = instance["_split"](given);
 
     expect(actual).toMatchObject(expected);
-    expect(actual.length).toBe(expected.length)
+    expect(actual.length).toBe(expected.length);
   });
-test ("_extractInfo", () => {
-  const given = `23.11.2024
+
+  test("_extractInfo", () => {
+    const given = `23.11.2024
   19:05
   23.11.2024
   19:06
   +3 000.00 ₽+3 000.00 ₽Пополнение. Система
   быстрых платежей
   1734`;
-  const expected: Row = {date: ddmmyyyy('23.11.2024', '19:06:00'),
-    value: +3000.00,
-    category: "other",
-    comment: "Пополнение. Система быстрых платежей 1734",
-    currency: "RUB",};
+
+    const expected: Row = {
+      date: ddmmyyyy("23.11.2024", "19:06:00"),
+      value: +3000.0,
+      category: "other",
+      comment: "Пополнение. Система быстрых платежей 1734",
+      currency: "RUB",
+    };
 
     const actual = instance["_extractInfo"](given);
 
     expect(actual).toMatchObject(expected);
-})
+  });
   test("parse", async () => {
     const expected10firstRows: Row[] = [
       {
@@ -175,8 +178,10 @@ test ("_extractInfo", () => {
       },
     ];
 
-    const pdf = await readFile(path.resolve(__dirname, "./__fixtures__/test.pdf"));
-    const rows = await instance.import(pdf)
+    const pdf = await readFile(
+      path.resolve(__dirname, "./__fixtures__/test.pdf")
+    );
+    const rows = await instance.import(pdf);
     const actual10firstRows = rows.slice(0, 10);
 
     expect(actual10firstRows).toEqual(expected10firstRows);
