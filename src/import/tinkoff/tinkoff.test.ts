@@ -96,7 +96,7 @@ describe("Tinkoff", () => {
       date: ddmmyyyy("23.11.2024", "19:06:00"),
       value: +3000.0,
       category: "other",
-      comment: "Пополнение. Система быстрых платежей 1734",
+      comment: "Пополнение. Система  быстрых платежей  1734",
       currency: "RUB",
     };
 

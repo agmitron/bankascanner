@@ -33,7 +33,7 @@ export class Tinkoff implements Importer {
     }
 
     private _extractInfo(input: string): Row {
-        const regex = /((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s\d+.\d{2})\s(.)){2}((.*\n)*)/
+        const regex = /((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s\d+.\d{2})\s(.)){2}((.*\n.*)*)/
         const match = input.match(regex);
     
         if (!match) {
@@ -41,9 +41,10 @@ export class Tinkoff implements Importer {
         }
     
         // Извлечение данных
-        const dateStr = match[0]; // Первая дата
-        const valueStr = match[4]; //
-        const comment = match[6].split('\n').slice(4).join(' ').trim(); // Извлекаем комментарий
+        const dateStr = match[2].trim(); 
+        const time = match[3].trim(); 
+        const valueStr = match[6].trim(); //
+        const comment = match[8].trim().replaceAll('\n', ''); // Извлекаем комментарий
         const currency = "RUB"; // Предполагаем, что валюта фиксирована
     
         // Преобразование строки значений в число
@@ -51,7 +52,7 @@ export class Tinkoff implements Importer {
     
         // Формируем объект Row
         const row: Row = {
-            date: new Date(dateStr.split('.').reverse().join('-')), // Преобразуем строку даты в объект Date
+            date: ddmmyyyy(dateStr, time),
             value: value,
             category: "other", // Здесь можно добавить логику для определения категории
             comment: comment,
