@@ -2,6 +2,7 @@ import { Result } from "pdf-parse";
 import { Importer } from "~/entities/importer";
 import { Row } from "~/entities/row";
 import { ddmmyyyy } from "~/utils/date";
+import pdf2data from "pdf-parse";
 
 //date for correct data match
 
@@ -10,8 +11,10 @@ const FAKE_DATA = `10.10.1010
 
 export class Tinkoff implements Importer {
 
-    import(file: Buffer): Promise<Row[]> {
-        throw new Error("Method not implemented.");
+    public async import (file: Buffer): Promise<Row[]> {
+        const data = await pdf2data(file);
+        const pieces = this._split(data.text);
+        return pieces.map((r) => this._extractInfo(r))
     }
     private _split(data: string): string[] {
         //add fake date for last element of data array
@@ -33,7 +36,7 @@ export class Tinkoff implements Importer {
     }
 
     private _extractInfo(input: string): Row {
-        const regex = /((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s\d+.\d{2})\s(.)){2}((.*\n.*)*)/
+        const regex = /((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s?\d+.\d{2})\s(.)){2}((.*\n?)*)/
         const match = input.match(regex);
     
         if (!match) {
@@ -44,11 +47,15 @@ export class Tinkoff implements Importer {
         const dateStr = match[2].trim(); 
         const time = match[3].trim(); 
         const valueStr = match[6].trim(); //
-        const comment = match[8].trim().replaceAll('\n', ''); // Извлекаем комментарий
+        const comment = match[8].trim().replaceAll('\n', ' '); // Извлекаем комментарий
         const currency = "RUB"; // Предполагаем, что валюта фиксирована
+        const operator = match[5].trim();
     
         // Преобразование строки значений в число
-        const value = parseFloat(valueStr.replace(/[\s₽]/g, ''));
+        let value = parseFloat(valueStr.replace(/[\s₽]/g, ''));
+        if(operator === "-") {
+            value = value * (-1)
+        }
     
         // Формируем объект Row
         const row: Row = {
