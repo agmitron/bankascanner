@@ -50,6 +50,13 @@ export class Tinkoff implements Importer {
         const comment = match[8].trim().replaceAll('\n', ' '); // Извлекаем комментарий
         const currency = "RUB"; // Предполагаем, что валюта фиксирована
         const operator = match[5].trim();
+
+        const card = comment.match(/(?=(.*\s?)(\d{4}|—))/)
+        if (!card) {
+            throw new Error("Card number not found");
+        }
+
+        const commentWithoutCard = comment.replace(card[2], '').trim()
     
         // Преобразование строки значений в число
         let value = parseFloat(valueStr.replace(/[\s₽]/g, ''));
@@ -62,7 +69,7 @@ export class Tinkoff implements Importer {
             date: ddmmyyyy(dateStr, time),
             value: value,
             category: "other", // Здесь можно добавить логику для определения категории
-            comment: comment,
+            comment: commentWithoutCard,
             currency: currency,
         };
     

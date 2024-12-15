@@ -96,7 +96,7 @@ describe("Tinkoff", () => {
       date: ddmmyyyy("23.11.2024", "19:06:00"),
       value: +3000.0,
       category: "other",
-      comment: "Пополнение. Система  быстрых платежей  1734",
+      comment: "Пополнение. Система   быстрых платежей",
       currency: "RUB",
     };
 
@@ -104,7 +104,8 @@ describe("Tinkoff", () => {
 
     expect(actual).toMatchObject(expected);
   });
-  test("parse", async () => {
+
+  test("import", async () => {
     const expected10firstRows: Row[] = [
       {
         value: +3000,
@@ -156,7 +157,7 @@ describe("Tinkoff", () => {
         date: ddmmyyyy("20.10.2024", "20:33:00"),
       },
       {
-        value: -99,
+        value: +40000,
         currency: "RUB",
         category: "other",
         comment: "Внутрибанковский перевод с договора 8152681174",
@@ -174,7 +175,7 @@ describe("Tinkoff", () => {
         currency: "RUB",
         category: "other",
         comment: "Внутренний перевод на договор 5859425828",
-        date: ddmmyyyy("18.11.2024", "11:56:00"),
+        date: ddmmyyyy("03.10.2024", "11:56:00"),
       },
     ];
 
