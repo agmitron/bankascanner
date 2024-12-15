@@ -48,7 +48,7 @@ export class Tinkoff implements Importer {
         const time = match[3].trim(); 
         const valueStr = match[6].trim(); //
         const comment = match[8].trim().replaceAll('\n', ' '); // Извлекаем комментарий
-        const currency = "RUB"; // Предполагаем, что валюта фиксирована
+        const currency = match[7]; // Предполагаем, что валюта фиксирована
         const operator = match[5].trim();
 
         const card = comment.match(/(?=(.*\s?)(\d{4}|—))/)
@@ -70,10 +70,15 @@ export class Tinkoff implements Importer {
             value: value,
             category: "other", // Здесь можно добавить логику для определения категории
             comment: commentWithoutCard,
-            currency: currency,
+            currency: currencyMapping[currency] ?? "unknown",
         };
     
         return row;
 
     }
+}
+const currencyMapping: Record<string, string> = {
+    "₽": "RUB",
+    "$": "USD",
+    "€": "EUR",
 }
