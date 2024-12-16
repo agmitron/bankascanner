@@ -2,9 +2,12 @@
   "scripts": {
     "start": "tsx index.ts",
     "test": "vitest",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "lint": "biome lint ./src",
+    "lint:fix": "biome lint --write ./src"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/node": "^22.5.4",
     "@types/yargs": "^17.0.33",
     "tsx": "^4.19.2",

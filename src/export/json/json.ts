@@ -1,5 +1,5 @@
-import { Exporter } from "~/entities/exporter";
-import { Row } from "~/entities/row";
+import type { Exporter } from "~/entities/exporter";
+import type { Row } from "~/entities/row";
 
 export class JSONExporter implements Exporter {
     export(data: Row[]): Promise<Buffer> {

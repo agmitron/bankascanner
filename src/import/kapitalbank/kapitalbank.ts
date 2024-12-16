@@ -1,11 +1,9 @@
-import { writeFile } from "fs/promises";
 import pdf2data from "pdf-parse";
-import path from "path";
-import { Importer } from "~/entities/importer";
-import { Row } from "~/entities/row";
+import type { Importer } from "~/entities/importer";
+import type { Row } from "~/entities/row";
 import {
-  Category,
-  CategoryDetectors,
+  type Category,
+  type CategoryDetectors,
   detectCategory,
 } from "~/entities/category";
 
@@ -139,7 +137,7 @@ export class KapitalBank implements Importer {
     }
 
     const date = matches[1];
-    const [day, month, year] = date.split(".").map((v) => parseInt(v, 10));
+    const [day, month, year] = date.split(".").map((v) => Number.parseInt(v, 10));
 
     return new Date(`${year}-${month}-${day}`);
   }
@@ -179,7 +177,7 @@ export class KapitalBank implements Importer {
     }
 
     const numberWithoutSpaces = result.replace(/\s/g, "");
-    return parseFloat(numberWithoutSpaces);
+    return Number.parseFloat(numberWithoutSpaces);
   }
 }
 
