@@ -1,4 +1,4 @@
-import type { Versioner as IVersioner, Version } from "~/domain/import";
+import type { Versioner as IVersioner, Version } from "~/entities/import";
 import { KapitalBankV2024 } from "./kapitalbank.2024";
 
 type KapitalbankVersion = "2024"; // add more versions here if needed

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { Row } from "~/domain/row";
+import type { Row } from "~/entities/row";
 import { ddmmyyyy } from "~/utils/date";
 import { Tinkoff } from "./tinkoff";
 import { readFile } from "node:fs/promises";

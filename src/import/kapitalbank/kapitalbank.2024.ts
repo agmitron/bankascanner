@@ -1,11 +1,11 @@
 import pdf2data from "pdf-parse";
-import type { Importer } from "~/domain/import";
-import type { Row } from "~/domain/row";
+import type { Importer } from "~/entities/import";
+import type { Row } from "~/entities/row";
 import {
   type Category,
   type CategoryDetectors,
   detectCategory,
-} from "~/domain/category";
+} from "~/entities/category";
 
 const categoryDetectors: CategoryDetectors = new Map([
 	["other", [(s) => true]],

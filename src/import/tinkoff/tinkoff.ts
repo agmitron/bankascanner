@@ -1,6 +1,6 @@
 import pdf2data from "pdf-parse";
-import type { Importer } from "~/domain/import";
-import type { Row } from "~/domain/row";
+import type { Importer } from "~/entities/import";
+import type { Row } from "~/entities/row";
 import { ddmmyyyy } from "~/utils/date";
 
 // date for correct data match

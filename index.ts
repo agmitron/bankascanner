@@ -10,7 +10,7 @@ import {
   UnknownBankError,
   Version,
   Versioner,
-} from "~/domain/import";
+} from "~/entities/import";
 
 const versioners: Record<string, Versioner<Version<string>>> = {
   kapitalbank: new kapitalbank.Versioner(),
