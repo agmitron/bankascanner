@@ -1,4 +1,5 @@
 import {
+	DEFAULT_VERSION,
 	UnknownBankError,
 	type Version,
 	type Versioner,
@@ -28,10 +29,11 @@ export const run = (bank: string, version: string, pdf: Buffer) => {
 
 export const choices = () => Object.keys(versioners);
 
-export const supports = (bank: string) => {
-	if (!versioners[bank]) {
+export const supports = (bank: string, version = DEFAULT_VERSION) => {
+	const versioner = versioners[bank];
+	if (!versioner) {
 		throw new UnknownBankError(bank);
 	}
 
-	return true;
+	return versioner.supported.includes(version);
 };

@@ -2,34 +2,10 @@ import fs from "node:fs/promises";
 import yargs from "yargs";
 import path from "node:path";
 import { hideBin } from "yargs/helpers";
-import * as kapitalbank from "~/import/kapitalbank";
-import * as tinkoff from "~/import/tinkoff";
-import { JSONExporter } from "~/export/json";
-import {
-	DEFAULT_VERSION,
-	UnknownVersionError,
-	UnknownBankError,
-	type Version,
-	type Versioner,
-} from "~/entities/import";
+import * as importer from "~/import";
+import * as exporter from "~/export";
 
-const versioners: Record<string, Versioner<Version<string>>> = {
-	kapitalbank: new kapitalbank.Versioner(),
-	tinkoff: new tinkoff.Versioner(),
-} as const;
-
-const getVersioner = (bank: string) => {
-	const versioner = versioners[bank];
-	if (!versioner) {
-		throw new UnknownBankError(bank);
-	}
-
-	return versioner;
-};
-
-const exporters = {
-	json: new JSONExporter(),
-} as const;
+import { DEFAULT_VERSION } from "~/entities/import";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)
@@ -39,42 +15,18 @@ const argv = yargs(hideBin(process.argv))
 		bank: {
 			type: "string",
 			demandOption: true,
-			choices: Object.keys(versioners),
+			choices: importer.choices(),
 		},
-		version: { type: "string", alias: "v" },
+		version: { type: "string", alias: "v", default: DEFAULT_VERSION },
 	})
-	.check((argv) => {
-		const versioner = getVersioner(argv.bank);
-
-		const version = argv.version || DEFAULT_VERSION;
-		if (!versioner.supported.includes(version)) {
-			throw new UnknownVersionError(version, argv.bank);
-		}
-
-		return true;
-	})
+	.check((argv) => importer.supports(argv.bank))
 	.parseSync();
 
 async function main() {
-	const versioner = getVersioner(argv.bank);
+	const pdf = await fs.readFile(path.resolve(__dirname, argv.in));
 
-	const exportFormat = argv.out.split(".").pop();
-	if (exportFormat !== "json") {
-		throw new Error("Only JSON output is supported for now!");
-	}
-
-	const exporter = exporters[exportFormat as keyof typeof exporters];
-	if (!exporter) {
-		throw new Error(`Unknown export format ${exportFormat}`);
-	}
-
-	const pdfFile = await fs.readFile(path.resolve(__dirname, argv.in));
-
-	const v = argv.version || (await versioner.guess(pdfFile));
-	const importer = versioner.choose(v);
-
-	const rows = await importer.import(pdfFile);
-	const buffer = await exporter.export(rows);
+	const rows = await importer.run(argv.bank, argv.version, pdf);
+	const buffer = await exporter.run(rows, argv.out); 
 
 	await fs.writeFile(path.resolve(__dirname, argv.out), buffer);
 }
