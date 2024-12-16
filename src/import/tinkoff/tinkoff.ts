@@ -11,7 +11,7 @@ const FAKE_DATA = `10.10.1010
 
 export class Tinkoff implements Importer {
 
-    public async import (file: Buffer): Promise<Row[]> {
+    public async import(file: Buffer): Promise<Row[]> {
         const data = await pdf2data(file);
         const pieces = this._split(data.text);
         return pieces.map((r) => this._extractInfo(r))
@@ -20,11 +20,11 @@ export class Tinkoff implements Importer {
         //add fake date for last element of data array
         data = `${data}
         ${FAKE_DATA}`
-        
+
         const re = /(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}([\n\s]*)\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})([\s\S]*?)(?=\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})/gm;
         const matches = data.matchAll(re)
         const piecesArray = [...matches];
-        
+
         if (!matches) {
             return [];
         }
@@ -38,14 +38,14 @@ export class Tinkoff implements Importer {
     private _extractInfo(input: string): Row {
         const regex = /((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s?\d+.\d{2})\s(.)){2}((.*\n?)*)/
         const match = input.match(regex);
-    
+
         if (!match) {
             throw new Error("Input does not match the expected format");
         }
-    
+
         // Извлечение данных
-        const dateStr = match[2].trim(); 
-        const time = match[3].trim(); 
+        const dateStr = match[2].trim();
+        const time = match[3].trim();
         const valueStr = match[6].trim(); //
         const comment = match[8].trim().replaceAll('\n', ' '); // Извлекаем комментарий
         const currency = match[7]; // Предполагаем, что валюта фиксирована
@@ -57,22 +57,22 @@ export class Tinkoff implements Importer {
         }
 
         const commentWithoutCard = comment.replace(card[2], '').trim()
-    
+
         // Преобразование строки значений в число
         let value = parseFloat(valueStr.replace(/[\s₽]/g, ''));
-        if(operator === "-") {
+        if (operator === "-") {
             value = value * (-1)
         }
-    
+
         // Формируем объект Row
         const row: Row = {
             date: ddmmyyyy(dateStr, time),
             value: value,
             category: "other", // Здесь можно добавить логику для определения категории
             comment: commentWithoutCard,
-            currency: currencyMapping[currency] ?? "unknown",
+            currency: currencyMapping[currency] ?? otherCurrency,
         };
-    
+
         return row;
 
     }
