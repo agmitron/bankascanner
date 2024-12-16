@@ -1,54 +1,34 @@
-import fs from "fs/promises";
+import fs from "node:fs/promises";
 import yargs from "yargs";
-import path from "path";
+import path from "node:path";
 import { hideBin } from "yargs/helpers";
-import { KapitalBank } from "~/import/kapitalbank/kapitalbank";
-import { Tinkoff } from "~/import/tinkoff/tinkoff";
-import { JSONExporter } from "~/export/json";
+import * as importer from "~/import";
+import * as exporter from "~/export";
 
-const importers = {
-  kapitalbank: new KapitalBank(),
-  tinkoff: new Tinkoff(),
-} as const;
-
-const exporters = {
-  json: new JSONExporter(),
-} as const;
+import { DEFAULT_VERSION } from "~/entities/import";
 
 const argv = yargs(hideBin(process.argv))
-  .options({
-    in: { type: "string", demandOption: true },
-    out: { type: "string", demandOption: true },
-    bank: {
-      type: "string",
-      demandOption: true,
-      choices: Object.keys(importers),
-    },
-  })
-  .parseSync();
+	.version(false)
+	.options({
+		in: { type: "string", demandOption: true },
+		out: { type: "string", demandOption: true },
+		bank: {
+			type: "string",
+			demandOption: true,
+			choices: importer.choices(),
+		},
+		version: { type: "string", alias: "v", default: DEFAULT_VERSION },
+	})
+	.check((argv) => importer.supports(argv.bank))
+	.parseSync();
 
 async function main() {
-  const importer = importers[argv.bank as keyof typeof importers];
-  if (!importer) {
-    throw new Error("Unknown bank " + argv.bank);
-  }
+	const pdf = await fs.readFile(path.resolve(__dirname, argv.in));
 
-  const exportFormat = argv.out.split(".").pop();
-  if (exportFormat !== "json") {
-    throw new Error("Only JSON output is supported for now!");
-  }
+	const rows = await importer.run(argv.bank, argv.version, pdf);
+	const buffer = await exporter.run(rows, argv.out); 
 
-  const exporter = exporters[exportFormat as keyof typeof exporters];
-  if (!exporter) {
-    throw new Error("Unknown export format " + exportFormat);
-  }
-
-  const pdfFile = await fs.readFile(path.resolve(__dirname, argv.in));
-
-  const rows = await importer.import(pdfFile);
-  const buffer = await exporter.export(rows);
-
-  await fs.writeFile(path.resolve(__dirname, argv.out), buffer);
+	await fs.writeFile(path.resolve(__dirname, argv.out), buffer);
 }
 
 main().catch(console.error);

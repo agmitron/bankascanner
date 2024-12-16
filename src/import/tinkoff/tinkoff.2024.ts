@@ -1,4 +1,5 @@
 import pdf2data from "pdf-parse";
+import { otherCurrency } from "~/entities/currency";
 import type { Importer } from "~/entities/import";
 import type { Row } from "~/entities/row";
 import { ddmmyyyy } from "~/utils/date";
@@ -7,7 +8,7 @@ import { ddmmyyyy } from "~/utils/date";
 const FAKE_DATA = `10.10.1010
 08:32`;
 
-export class Tinkoff implements Importer {
+export class TinkoffV2024 implements Importer {
 	public async import(file: Buffer): Promise<Row[]> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
