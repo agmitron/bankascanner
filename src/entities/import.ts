@@ -12,7 +12,7 @@ export class UnknownVersionError extends Error {
   }
 }
 
-export const DEFAULT_VERSION = "default";
+export const DEFAULT_VERSION = "latest";
 
 export type Version<V extends string> = typeof DEFAULT_VERSION | V;
 
