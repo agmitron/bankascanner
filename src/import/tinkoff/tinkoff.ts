@@ -67,7 +67,7 @@ export class Tinkoff implements Importer {
         // Формируем объект Row
         const row: Row = {
             date: ddmmyyyy(dateStr, time),
-            value: value,
+            value,
             category: "other", // Здесь можно добавить логику для определения категории
             comment: commentWithoutCard,
             currency: currencyMapping[currency] ?? otherCurrency,
