@@ -7,8 +7,6 @@ const exporters: Record<string, Exporter> = {
 	json: new JSONExporter(),
 };
 
-const allowedFormats = Object.keys(exporters);
-
 // TODO: other export formats
 export const run = (
 	rows: Row[],
@@ -19,9 +17,10 @@ export const run = (
 		throw new Error(`Invalid out format ${out}`);
 	}
 
-	if (!allowedFormats.includes(format)) {
-		throw new UnsupportedFormatError(format, allowedFormats);
-	}
+    const exporter = exporters[format];
+    if (!exporter) {
+		throw new UnsupportedFormatError(format, Object.keys(exporters));
+    }
 
 	return exporters[format].export(rows);
 };
