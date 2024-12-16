@@ -1,1 +1,1 @@
-const otherCurrency = "unknown"
+export const otherCurrency = "unknown"

@@ -5,8 +5,6 @@ import {
 } from "~/entities/import";
 import { TinkoffV2024 } from "./tinkoff.2024";
 
-export { TinkoffV2024 as Tinkoff } from "./tinkoff.2024";
-
 type TinkoffVersion = "2024"; // add more versions here if needed
 
 const versions: Version<TinkoffVersion>[] = [DEFAULT_VERSION, "2024"];
