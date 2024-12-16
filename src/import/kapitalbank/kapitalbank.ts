@@ -2,19 +2,19 @@ import pdf2data from "pdf-parse";
 import type { Importer } from "~/entities/importer";
 import type { Row } from "~/entities/row";
 import {
-  type Category,
-  type CategoryDetectors,
-  detectCategory,
+	type Category,
+	type CategoryDetectors,
+	detectCategory,
 } from "~/entities/category";
 
 const categoryDetectors: CategoryDetectors = new Map([
-  ["other", [(s) => true]],
+	["other", [(s) => true]],
 ]);
 
 interface Profile {
-  name: string;
-  account: string;
-  currency: string;
+	name: string;
+	account: string;
+	currency: string;
 }
 
 // Takes a string, changes it and returns a new string.
@@ -22,163 +22,165 @@ interface Profile {
 type Preparator = (s: string) => string;
 
 interface Extractor {
-  regex: RegExp;
-  index: number;
+	regex: RegExp;
+	index: number;
 }
 
 export class KapitalBank implements Importer {
-  private _profile: Profile | null = null;
+	private _profile: Profile | null = null;
 
-  public async import(file: Buffer): Promise<Row[]> {
-    const data = await pdf2data(file);
-    const prepared = this._prepare(data.text);
-    const rows = this._split(prepared);
-    return rows.map((r) => this._parseRow(r));
-  }
+	public async import(file: Buffer): Promise<Row[]> {
+		const data = await pdf2data(file);
+		const prepared = this._prepare(data.text);
+		const rows = this._split(prepared);
+		return rows.map((r) => this._parseRow(r));
+	}
 
-  private _prepare(data: string): string {
-    const preparators: Preparator[] = [
-      (v) => {
-        const lines = v.split("\n");
-        const indexOfTitle = lines.findIndex((l) =>
-          l.includes("Transaction amountDetails")
-        );
+	private _prepare(data: string): string {
+		const preparators: Preparator[] = [
+			(v) => {
+				const lines = v.split("\n");
+				const indexOfTitle = lines.findIndex((l) =>
+					l.includes("Transaction amountDetails"),
+				);
 
-        const result = lines.slice(indexOfTitle + 1).join("\n");
-        return result;
-      },
-      (v) => this._extractProfile(v),
-      (v) => v.replaceAll(bankInfo, ""),
-      (v) => v.replaceAll(footer, ""),
-    ];
+				const result = lines.slice(indexOfTitle + 1).join("\n");
+				return result;
+			},
+			(v) => this._extractProfile(v),
+			(v) => v.replaceAll(bankInfo, ""),
+			(v) => v.replaceAll(footer, ""),
+		];
 
-    return preparators.reduce((acc, p) => p(acc), data);
-  }
+		return preparators.reduce((acc, p) => p(acc), data);
+	}
 
-  private _split(data: string): string[] {
-    const withoutEmptyLines = data.replaceAll(/^\s*\n/gm, "");
+	private _split(data: string): string[] {
+		const withoutEmptyLines = data.replaceAll(/^\s*\n/gm, "");
 
-    const matches = withoutEmptyLines.match(
-      /(\d{2}\.\d{2}\.\d{4}\d{2}\.\d{2}\.\d{4})(.\n?)*?(?=(\d{2}\.\d{2}\.\d{4}\d{2}\.\d{2}\.\d{4})|$)/gm
-    );
+		const matches = withoutEmptyLines.match(
+			/(\d{2}\.\d{2}\.\d{4}\d{2}\.\d{2}\.\d{4})(.\n?)*?(?=(\d{2}\.\d{2}\.\d{4}\d{2}\.\d{2}\.\d{4})|$)/gm,
+		);
 
-    if (!matches) {
-      return [];
-    }
+		if (!matches) {
+			return [];
+		}
 
-    const pieces: string[] = [];
-    for (const m of matches) {
-      const index = data.indexOf(m);
-      const piece = data.slice(index, index + m.length);
-      pieces.push(piece.trim());
-    }
+		const pieces: string[] = [];
+		for (const m of matches) {
+			const index = data.indexOf(m);
+			const piece = data.slice(index, index + m.length);
+			pieces.push(piece.trim());
+		}
 
-    return pieces;
-  }
+		return pieces;
+	}
 
-  private _extractProfile(data: string): string {
-    const r = new RegExp(
-      /(\w+\s\w+)\s+\n?Account number: (\d*)\s+\n?Account currency: (.*)/gm
-    );
+	private _extractProfile(data: string): string {
+		const r = new RegExp(
+			/(\w+\s\w+)\s+\n?Account number: (\d*)\s+\n?Account currency: (.*)/gm,
+		);
 
-    const match = r.exec(data);
+		const match = r.exec(data);
 
-    this._profile = {
-      name: match?.[1] ?? "",
-      account: match?.[2] ?? "",
-      currency: match?.[3] ?? "",
-    };
+		this._profile = {
+			name: match?.[1] ?? "",
+			account: match?.[2] ?? "",
+			currency: match?.[3] ?? "",
+		};
 
-    return data.replaceAll(r, "");
-  }
+		return data.replaceAll(r, "");
+	}
 
-  private _parseRow(line: string): Row {
-    if (!this._profile) {
-      throw new Error("Profile is not set");
-    }
+	private _parseRow(line: string): Row {
+		if (!this._profile) {
+			throw new Error("Profile is not set");
+		}
 
-    const date = this._getDate(line);
-    const value = this._getValue(line);
-    const comment = this._getComment(line);
-    const category = this._getCategory(line);
-    const currency = this._profile.currency;
+		const date = this._getDate(line);
+		const value = this._getValue(line);
+		const comment = this._getComment(line);
+		const category = this._getCategory(line);
+		const currency = this._profile.currency;
 
-    return {
-      date,
-      value,
-      comment,
-      category,
-      currency,
-    };
-  }
+		return {
+			date,
+			value,
+			comment,
+			category,
+			currency,
+		};
+	}
 
-  private _getComment(piece: string): string {
-    const onlyValueAndComment = piece.replace(
-      /(\d{2}\.\d{2}\.\d{4}\d{2}\.\d{2}\.\d{4})\d{7,8}/gm,
-      ""
-    );
-    const value = this._getValue(piece);
+	private _getComment(piece: string): string {
+		const onlyValueAndComment = piece.replace(
+			/(\d{2}\.\d{2}\.\d{4}\d{2}\.\d{2}\.\d{4})\d{7,8}/gm,
+			"",
+		);
+		const value = this._getValue(piece);
 
-    const valueWithDecimals = value.toFixed(2); // 100.00 instead of just 100
-    const onlyComment = onlyValueAndComment
-      .replace(valueWithDecimals, "")
-      .trim();
-    return onlyComment;
-  }
+		const valueWithDecimals = value.toFixed(2); // 100.00 instead of just 100
+		const onlyComment = onlyValueAndComment
+			.replace(valueWithDecimals, "")
+			.trim();
+		return onlyComment;
+	}
 
-  private _getCategory(piece: string): Category {
-    return detectCategory(categoryDetectors, piece);
-  }
+	private _getCategory(piece: string): Category {
+		return detectCategory(categoryDetectors, piece);
+	}
 
-  private _getDate(piece: string): Date {
-    const matches = /\d{2}\.\d{2}\.\d{4}(\d{2}\.\d{2}\.\d{4})/gm.exec(piece);
-    if (!matches) {
-      throw new Error(`Could not parse date from line: ${piece}`);
-    }
+	private _getDate(piece: string): Date {
+		const matches = /\d{2}\.\d{2}\.\d{4}(\d{2}\.\d{2}\.\d{4})/gm.exec(piece);
+		if (!matches) {
+			throw new Error(`Could not parse date from line: ${piece}`);
+		}
 
-    const date = matches[1];
-    const [day, month, year] = date.split(".").map((v) => Number.parseInt(v, 10));
+		const date = matches[1];
+		const [day, month, year] = date
+			.split(".")
+			.map((v) => Number.parseInt(v, 10));
 
-    return new Date(`${year}-${month}-${day}`);
-  }
+		return new Date(`${year}-${month}-${day}`);
+	}
 
-  private _getValue(piece: string): number {
-    const dateWidth = 10; // "02.02.2024".length
-    const withoutDate = piece.slice(dateWidth * 2);
+	private _getValue(piece: string): number {
+		const dateWidth = 10; // "02.02.2024".length
+		const withoutDate = piece.slice(dateWidth * 2);
 
-    const extractors: Extractor[] = [
-      {
-        // common cases
-        regex: new RegExp(/\d{7,8}(-?\d[\d\s]+\.\d{2}).*/),
-        index: 1,
-      },
-      {
-        // L1654 589.00
-        regex: new RegExp(/(^[A-Z])\d{3}((-?\d[\d\s]+\.\d{2}).*)/),
-        index: 3,
-      },
-      {
-        // 1575037-7.08
-        regex: new RegExp(/\d{7,8}(-?\d.\d{2}).*/),
-        index: 1,
-      },
-    ];
+		const extractors: Extractor[] = [
+			{
+				// common cases
+				regex: new RegExp(/\d{7,8}(-?\d[\d\s]+\.\d{2}).*/),
+				index: 1,
+			},
+			{
+				// L1654 589.00
+				regex: new RegExp(/(^[A-Z])\d{3}((-?\d[\d\s]+\.\d{2}).*)/),
+				index: 3,
+			},
+			{
+				// 1575037-7.08
+				regex: new RegExp(/\d{7,8}(-?\d.\d{2}).*/),
+				index: 1,
+			},
+		];
 
-    let result: string | null = null;
-    for (const { regex, index } of extractors) {
-      result = regex.exec(withoutDate)?.[index] ?? null;
-      if (result) {
-        break;
-      }
-    }
+		let result: string | null = null;
+		for (const { regex, index } of extractors) {
+			result = regex.exec(withoutDate)?.[index] ?? null;
+			if (result) {
+				break;
+			}
+		}
 
-    if (!result) {
-      throw new Error(`Could not parse value from line: ${piece}`);
-    }
+		if (!result) {
+			throw new Error(`Could not parse value from line: ${piece}`);
+		}
 
-    const numberWithoutSpaces = result.replace(/\s/g, "");
-    return Number.parseFloat(numberWithoutSpaces);
-  }
+		const numberWithoutSpaces = result.replace(/\s/g, "");
+		return Number.parseFloat(numberWithoutSpaces);
+	}
 }
 
 const bankInfo = `
