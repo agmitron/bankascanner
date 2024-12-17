@@ -40,7 +40,12 @@ npm run test -- tinkoff # will test tinkoff.test.ts
 
 - [x] Kapitalbank 
 - [x] Tinkoff
-- [ ] Sberbank (coming coon)
-- [ ] Jusan (coming coon)
-- [ ] TBC (coming coon)
-- [ ] Kaspi (coming coon)
+
+## Coming soon
+
+- [ ] Sberbank
+- [ ] Jusan
+- [ ] TBC
+- [ ] Kaspi
+- [ ] Permata Bank
+- [ ] MayBank
