@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "start": "tsx index.ts",
+    "start": "tsx cli",
     "test": "vitest",
     "postinstall": "patch-package",
     "lint": "biome lint ./src",
