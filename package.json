@@ -1,38 +1,40 @@
 {
-  "name": "bankascanner",
-  "version": "0.0.4",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/agmitron/bankascanner.git"
-  },
-  "description": "Parse your PDF bank statements into structured format.",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "clean": "rimraf dist",
-    "build": "npm run clean && tsc -p tsconfig.build.json",
-    "start": "tsx cli",
-    "test": "vitest",
-    "postinstall": "patch-package",
-    "lint": "biome lint ./src",
-    "lint:fix": "biome lint --write ./src"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@types/node": "^22.5.4",
-    "@types/yargs": "^17.0.33",
-    "rimraf": "^6.0.1",
-    "tsx": "^4.19.2",
-    "typescript": "^5.5.4",
-    "vite-tsconfig-paths": "^5.1.1",
-    "vitest": "^2.1.4"
-  },
-  "dependencies": {
-    "@types/pdf-parse": "1.1.4",
-    "fs": "^0.0.1-security",
-    "patch-package": "^8.0.0",
-    "pdf-parse": "1.1.1",
-    "yargs": "^17.7.2"
-  }
+	"name": "bankascanner",
+	"version": "0.0.4",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/agmitron/bankascanner.git"
+	},
+	"description": "Parse your PDF bank statements into structured format.",
+	"files": ["dist"],
+	"scripts": {
+		"clean": "rimraf dist",
+		"build": "npm run clean && tsc -p tsconfig.build.json",
+		"start": "tsx cli",
+		"test": "vitest",
+		"test:watch": "vitest watch",
+		"postinstall": "patch-package",
+		"lint": "biome lint ./",
+		"lint:fix": "biome lint --write ./",
+		"format": "biome format --write ./",
+		"prepare": "husky"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "^22.5.4",
+		"@types/yargs": "^17.0.33",
+		"husky": "^9.1.7",
+		"rimraf": "^6.0.1",
+		"tsx": "^4.19.2",
+		"typescript": "^5.5.4",
+		"vite-tsconfig-paths": "^5.1.1",
+		"vitest": "^2.1.4"
+	},
+	"dependencies": {
+		"@types/pdf-parse": "1.1.4",
+		"fs": "^0.0.1-security",
+		"patch-package": "^8.0.0",
+		"pdf-parse": "1.1.1",
+		"yargs": "^17.7.2"
+	}
 }

@@ -23,12 +23,12 @@ const argv = yargs(hideBin(process.argv))
 	.parseSync();
 
 async function main() {
-	const pdf = await fs.readFile(path.resolve(__dirname, '..', argv.in));
+	const pdf = await fs.readFile(path.resolve(__dirname, "..", argv.in));
 
 	const rows = await importer.run(argv.bank, argv.version, pdf);
-	const buffer = await exporter.run(rows, argv.out); 
+	const buffer = await exporter.run(rows, argv.out);
 
-	await fs.writeFile(path.resolve(__dirname, '..', argv.out), buffer);
+	await fs.writeFile(path.resolve(__dirname, "..", argv.out), buffer);
 }
 
 main().catch(console.error);

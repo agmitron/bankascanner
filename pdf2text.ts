@@ -9,17 +9,17 @@ import path from "node:path";
 import pdf2text from "pdf-parse";
 
 const argv = yargs(hideBin(process.argv))
-  .options({
-    in: { type: "string", demandOption: true },
-    out: { type: "string", demandOption: true },
-  })
-  .parseSync();
+	.options({
+		in: { type: "string", demandOption: true },
+		out: { type: "string", demandOption: true },
+	})
+	.parseSync();
 
 async function run() {
-  const pdf = await readFile(path.resolve(__dirname, argv.in));
-  const { text } = await pdf2text(pdf);
+	const pdf = await readFile(path.resolve(__dirname, argv.in));
+	const { text } = await pdf2text(pdf);
 
-  await writeFile(path.resolve(__dirname, argv.out), text);
+	await writeFile(path.resolve(__dirname, argv.out), text);
 }
 
 run().catch(console.error);

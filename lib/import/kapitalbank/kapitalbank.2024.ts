@@ -2,9 +2,9 @@ import pdf2data from "pdf-parse";
 import type { Importer } from "~/entities/import";
 import type { Row } from "~/entities/row";
 import {
-  type Category,
-  type CategoryDetectors,
-  detectCategory,
+	type Category,
+	type CategoryDetectors,
+	detectCategory,
 } from "~/entities/category";
 
 const categoryDetectors: CategoryDetectors = new Map([
@@ -30,7 +30,7 @@ interface Extractor {
  * Parses KapitalBank statements of the 2024 version.
  */
 export class KapitalBankV2024 implements Importer {
-  private _profile: Profile | null = null;
+	private _profile: Profile | null = null;
 
 	public async import(file: Buffer): Promise<Row[]> {
 		const data = await pdf2data(file);

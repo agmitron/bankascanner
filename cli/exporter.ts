@@ -6,7 +6,7 @@ import { JSONExporter } from "~/export/json";
 const exporters: Record<string, Exporter> = {
 	json: new JSONExporter(),
 
-    // TODO: csv
+	// TODO: csv
 };
 
 export const run = (
@@ -18,10 +18,10 @@ export const run = (
 		throw new Error(`Invalid out format ${out}`);
 	}
 
-    const exporter = exporters[format];
-    if (!exporter) {
+	const exporter = exporters[format];
+	if (!exporter) {
 		throw new UnsupportedFormatError(format, Object.keys(exporters));
-    }
+	}
 
 	return exporters[format].export(rows);
 };
