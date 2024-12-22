@@ -6,17 +6,17 @@ export type DefaultCategory = Extract<Category, "other">;
 export const DEFAULT_CATEGORY: DefaultCategory = "other";
 
 export const detectCategory = (
-  detectorsMap: CategoryDetectors,
-  input: string
+	detectorsMap: CategoryDetectors,
+	input: string,
 ): Category => {
-  for (const [category, detectors] of detectorsMap.entries()) {
-    for (const detector of detectors) {
-      const result = detector(input);
-      if (result) {
-        return category;
-      }
-    }
-  }
+	for (const [category, detectors] of detectorsMap.entries()) {
+		for (const detector of detectors) {
+			const result = detector(input);
+			if (result) {
+				return category;
+			}
+		}
+	}
 
-  return DEFAULT_CATEGORY;
+	return DEFAULT_CATEGORY;
 };
