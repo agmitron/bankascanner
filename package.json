@@ -1,6 +1,6 @@
 {
   "name": "bankascanner",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Parse your PDF bank statements into structured format.",
   "files": [
     "dist"
