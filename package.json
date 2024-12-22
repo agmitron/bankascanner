@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "start": "tsx index.ts",
     "test": "vitest",
     "postinstall": "patch-package",

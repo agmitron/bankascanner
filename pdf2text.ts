@@ -1,12 +1,12 @@
 // This is a simple script that reads a PDF file and writes its content to a text file.
-// Usage: `ts-node pdf2text.ts --in=path/to/in.pdf --out=path/to/out.txt`
+// Usage: `npx pdf2text.ts --in=path/to/in.pdf --out=path/to/out.txt`
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
-import { readFile, writeFile } from "fs/promises";
-import path from "path";
-import pdfParser from "pdf-parse";
+import { readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import pdf2text from "pdf-parse";
 
 const argv = yargs(hideBin(process.argv))
   .options({
@@ -17,9 +17,9 @@ const argv = yargs(hideBin(process.argv))
 
 async function run() {
   const pdf = await readFile(path.resolve(__dirname, argv.in));
-  const data = await pdfParser(pdf);
+  const { text } = await pdf2text(pdf);
 
-  await writeFile(path.resolve(__dirname, argv.out), data.text);
+  await writeFile(path.resolve(__dirname, argv.out), text);
 }
 
 run().catch(console.error);

@@ -5,9 +5,10 @@ import { JSONExporter } from "~/export/json";
 
 const exporters: Record<string, Exporter> = {
 	json: new JSONExporter(),
+
+    // TODO: csv
 };
 
-// TODO: other export formats
 export const run = (
 	rows: Row[],
 	out: string,
