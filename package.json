@@ -1,6 +1,10 @@
 {
   "name": "bankascanner",
-  "version": "0.0.3",
+  "version": "0.0.4",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agmitron/bankascanner.git"
+  },
   "description": "Parse your PDF bank statements into structured format.",
   "files": [
     "dist"
