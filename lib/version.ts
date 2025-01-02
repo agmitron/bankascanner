@@ -1,4 +1,3 @@
-
 import type { Category } from "./category";
 
 export const DEFAULT_VERSION = "latest";
@@ -12,7 +11,6 @@ export interface Row {
 	comment: string;
 	currency: string;
 }
-
 
 export interface Importer {
 	import(file: Buffer): Promise<Row[]>;
