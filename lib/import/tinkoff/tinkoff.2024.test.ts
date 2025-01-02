@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import type { Row } from "~/entities/row";
-import { ddmmyyyy } from "~/utils/date";
+import { ddmmyyyy } from "~/date";
 import { TinkoffV2024 } from "./tinkoff.2024";
 import { readFile } from "node:fs/promises";
 import path from "node:path";

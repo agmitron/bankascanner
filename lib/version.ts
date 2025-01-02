@@ -1,20 +1,16 @@
-import type { Row } from "./row";
-
-export class UnknownBankError extends Error {
-	constructor(bank: string) {
-		super(`Unknown bank ${bank}`);
-	}
-}
-
-export class UnknownVersionError extends Error {
-	constructor(version: string, bank: string) {
-		super(`Unknown version ${version} for bank ${bank}`);
-	}
-}
+import type { Category } from "./category";
 
 export const DEFAULT_VERSION = "latest";
 
 export type Version<V extends string> = typeof DEFAULT_VERSION | V;
+
+export interface Row {
+	date: Date;
+	value: number;
+	category: Category;
+	comment: string;
+	currency: string;
+}
 
 export interface Importer {
 	import(file: Buffer): Promise<Row[]>;

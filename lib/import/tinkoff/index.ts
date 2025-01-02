@@ -2,7 +2,7 @@ import {
 	DEFAULT_VERSION,
 	type Version,
 	type Versioner as IVersioner,
-} from "~/entities/import";
+} from "~/version";
 import { TinkoffV2024 } from "./tinkoff.2024";
 
 type TinkoffVersion = "2024"; // add more versions here if needed

@@ -4,7 +4,7 @@ import * as fs from "node:fs/promises";
 import { test, describe, expect } from "vitest";
 import { KapitalBankV2024 } from "./kapitalbank.2024";
 import type { Row } from "~/entities/row";
-import { ddmmyyyy } from "~/utils/date";
+import { ddmmyyyy } from "~/date";
 import type { Category } from "~/entities/category";
 
 describe("Kapitalbank", () => {

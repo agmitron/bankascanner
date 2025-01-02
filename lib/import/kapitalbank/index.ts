@@ -2,7 +2,7 @@ import {
 	DEFAULT_VERSION,
 	type Versioner as IVersioner,
 	type Version,
-} from "~/entities/import";
+} from "~/version";
 import { KapitalBankV2024 } from "./kapitalbank.2024";
 
 type KapitalbankVersion = "2024"; // add more versions here if needed

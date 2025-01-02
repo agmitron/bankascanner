@@ -1,8 +1,8 @@
 import pdf2data from "pdf-parse";
-import { otherCurrency } from "~/entities/currency";
-import type { Importer } from "~/entities/import";
-import type { Row } from "~/entities/row";
-import { ddmmyyyy } from "~/utils/date";
+import { otherCurrency } from "~/currency";
+import type { Importer } from "~/import";
+import type { Row } from "~/row";
+import { ddmmyyyy } from "~/date";
 
 // date for correct data match
 const FAKE_DATA = `10.10.1010
