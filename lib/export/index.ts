@@ -1,7 +1,10 @@
-import { type Exporter, UnsupportedFormatError } from "~/entities/export";
-import type { Row } from "~/entities/row";
+import type { Row } from "~/row";
+import { JSONExporter } from "./json";
+import { UnsupportedFormatError } from "./error";
 
-import { JSONExporter } from "~/export/json";
+export interface Exporter {
+    export(data: Row[]): Promise<Buffer>;
+}
 
 const exporters: Record<string, Exporter> = {
 	json: new JSONExporter(),
