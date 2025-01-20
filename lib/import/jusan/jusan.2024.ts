@@ -15,20 +15,21 @@ export class JusanV2024 implements Importer {public async import(file: Buffer): 
     }
 
     private _split(text: string): string[] {
-        // add fake date for last element of data array
-        const data = `${text}
-        ${FAKE_DATA}`;
-
-        const re =
-            /(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}([\n\s]*)\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})([\s\S]*?)(?=\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})/gm;
+        const data = `${text}\n${FAKE_DATA}`;
+        console.log("Data to split:", data);
+    
+        const re = /(\d{2}\.\d{2}\.\d{4}\s*\n\d{2}:\d{2}:\d{2}\n[\s\S]*?)(?=\d{2}\.\d{2}\.\d{4})/gm;
         const matches = data.matchAll(re);
-
-        if (!matches) {
-            return [];
+    
+        const pieces: string[] = [];
+        for (const match of matches) {
+            pieces.push(match[0].trim()); // Добавляем только полное совпадение
         }
-
-        const pieces: string[] = [...matches].map(([m]) => m.trim());
-
+    
+        console.log("Matched pieces:", pieces);
         return pieces;
     }
+    
+    
+    
 }
