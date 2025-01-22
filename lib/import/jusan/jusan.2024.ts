@@ -18,17 +18,33 @@ export class JusanV2024 implements Importer {public async import(file: Buffer): 
         const data = `${text}\n${FAKE_DATA}`;
         console.log("Data to split:", data);
     
-        const re = /(\d{2}\.\d{2}\.\d{4}\s*\n\d{2}:\d{2}:\d{2}\n[\s\S]*?)(?=\d{2}\.\d{2}\.\d{4})/gm;
-        const matches = data.matchAll(re);
+        
+        const mainRe = /(\d{2}\.\d{2}\.\d{4}\s*\n\d{2}:\d{2}:\d{2}\n[\s\S]*?)(?=\d{2}\.\d{2}\.\d{4})/gm;
     
-        const pieces: string[] = [];
-        for (const match of matches) {
-            pieces.push(match[0].trim()); // Добавляем только полное совпадение
-        }
+        
+        const lastRe = /(\d{2}\.\d{2}\.\d{4}\s*IM\s*.*?\d{2}\.\d{2}\.\d{4}[\s\S]*?)(?=\d{2}\.\d{2}\.\d{4}|$)/gm;
     
-        console.log("Matched pieces:", pieces);
-        return pieces;
+        
+        const mainMatches = data.match(mainRe) || [];
+        const lastMatches = data.match(lastRe) || [];
+    
+        
+        const allMatches = [...mainMatches, ...lastMatches].map(match => match.trim());
+    
+        
+        const sortedMatches = allMatches.sort((a, b) => {
+            const dateA = new Date(a.match(/(\d{2}\.\d{2}\.\d{4})/)[0]);
+            const dateB = new Date(b.match(/(\d{2}\.\d{2}\.\d{4})/)[0]);
+            return dateA.getTime() - dateB.getTime();
+        });
+    
+        console.log("Matched and sorted pieces:", sortedMatches);
+        return sortedMatches;
     }
+    
+    
+    
+    
     
     
     
