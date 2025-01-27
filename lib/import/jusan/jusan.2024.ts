@@ -42,10 +42,53 @@ export class JusanV2024 implements Importer {public async import(file: Buffer): 
         return sortedMatches;
     }
     
+    _extractInfo(given: string): Row {
+        const regex = /(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})\s+([\s\S]+?)\s+Референс:\s+(\d+)\s+Код авторизации:\s+(\d+)\s+([\s\S]*?)(\d+(\.\d{2})?)([A-Z]{3})/;
+
+        const match = given.match(regex);
+
+        if (!match) {
+            throw new Error("No match found");
+        }
+
+        const date = match[1];
+        const time = match[2];
+        const comment = match[3].trim();
+        const reference = `Референс: ${match[4]}`;
+        const authorizationCode = `Код авторизации: ${match[5]}`;
+        const additionalInfo = match[6].trim();
+        const value = -parseFloat(match[7]);
+        const currency = match[9];
+
+        // Формируем комментарий с правильными переносами строк
+        const commentParts = [comment];
+
+        // Проверяем, если референс и код авторизации уникальны
+        if (!commentParts.includes(reference)) {
+            commentParts.push(reference);
+        }
+        if (!commentParts.includes(authorizationCode)) {
+            commentParts.push(authorizationCode);
+        }
+        if (additionalInfo) {
+            commentParts.push(additionalInfo);
+        }
+
+        const formattedComment = commentParts.join('\n').trim(); // Соединяем с переносами
+
+        return {
+            date: ddmmyyyy(date, time),
+            value,
+            category: "other",
+            comment: formattedComment,
+            currency,
+        };
     
-    
-    
-    
-    
-    
+            
+        }   
 }
+const currencyMapping: Record<string, string> = {
+	"₽": "RUB",
+	$: "USD",
+	"€": "EUR",
+};
