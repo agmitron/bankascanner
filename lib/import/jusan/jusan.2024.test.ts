@@ -145,7 +145,7 @@ GEO, Batumi`,
 			currency: "GEL",
 		};
 
-		const actual = instance["_extractInfo"](given);
+        const actual = instance["_extractInfo"](given);
 
 		expect(actual).toMatchObject(expected);
 	});
