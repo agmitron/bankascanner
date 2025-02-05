@@ -95,30 +95,30 @@ GEO, Batumi15.82GEL0.005.85`,
 Референс: 430113777963 
 Код авторизации: 568313
 GEO, Batumi26.19GEL0.009.68`,
-`27.10.2024 
+            `27.10.2024 
 16:56:20
 Покупкаi.m Dmitrii Novikov
 Референс: 430112623564 
 Код авторизации: 568312
 GEO, Batumi14.00GEL0.005.17`,
-`27.10.2024 
+            `27.10.2024 
 16:02:36
 ПокупкаTEMU.COM 
 Код авторизации: 568314
 IRL, DUBLIN 232.36GEL0.0011.96`,
-`27.10.2024 
+            `27.10.2024 
 13:24:41
 ПокупкаLLC DIGITAL DISTRIBUTI 
 Референс: 430113696031 
 Код авторизации: 568311
 GEO, TBILISI164.80GEL0.0060.89`,
-`26.10.2024 
+            `26.10.2024 
 19:46:59
 ПокупкаCARREFOUR 
 Референс: 430015509790 
 Код авторизации: 568310
 GEO, BATUMI10.20GEL0.003.77`,
-`25.10.2024 IM IVAN KRUPENIKOV 28.10.2024ПокупкаGEO, BATUMI5.00GEL0.001.86`
+            `25.10.2024 IM IVAN KRUPENIKOV 28.10.2024ПокупкаGEO, BATUMI5.00GEL0.001.86`
         ];
 
         const actual = instance["_split"](given);
@@ -127,28 +127,153 @@ GEO, BATUMI10.20GEL0.003.77`,
         expect(actual.length).toBe(expected.length);
     });
     test("_extractInfo", () => {
-		const given = `29.10.2024 
+        const given = `29.10.2024 
 10:59:46
 ПокупкаALALI 2008 LTD 
 Референс: 430306655362 
 Код авторизации: 568318
 GEO, Batumi25.00GEL0.009.27`;
 
-		const expected: Row = {
-			date: ddmmyyyy("29.10.2024", "10:59:46"),
-      value: -25.00,
-      category: "other",
-      comment: `ПокупкаALALI 2008 LTD
+        const expected: Row = {
+            date: ddmmyyyy("29.10.2024", "10:59:46"),
+            value: -25.00,
+            category: "other",
+            comment: `ПокупкаALALI 2008 LTD
 Референс: 430306655362
 Код авторизации: 568318
 GEO, Batumi`,
-      currency: "GEL",
-		};
+            currency: "GEL",
+        };
 
-		const actual = instance["_extractInfo"](given);
+        const actual = instance["_extractInfo"](given);
 
-		expect(actual).toMatchObject(expected);
-	});
+        expect(actual).toMatchObject(expected);
+    });
+    test("import", async () => {
+        const expected10firstRows: Row[] = [
+            
+            {
+                date: ddmmyyyy("2024-11-04", "11:22:56"),
+                value: -113.98,
+                category: "other",
+                comment: `Покупка   Carrefour(BTM)
+Референс: 430941151128
+Код авторизации: 568326
+GEO, Batumi`,
+                currency: "GEL",
 
+            },
+            {
+                date: ddmmyyyy("26.08.2024", "11:37:50"),
+                value: -9000.00,
+                category: "other",
+                comment: `Перевод (со 
+счета)
+MOBILE BANK
+Референс: 423901795442
+Код авторизации: 568102
+KAZ, 
+ALMATY`,
+                currency: "KZT",
+
+           },
+            {
+                date: ddmmyyyy("28.10.2024", "20:04:09"),
+                value: -60.00,
+                category: "other",
+                comment: `Покупкаmagti.com 
+Референс: 430216076790 
+Код авторизации: 568316
+GEO, Tbilisi`,
+                currency: "GEL",
+
+            },
+//             {
+//                 date: ddmmyyyy("28.10.2024", "10:59:32"),
+//                 value: -15.82,
+//                 category: "other",
+//                 comment: `ПокупкаNIKORA #745 
+// Референс: 430206188573 
+// Код авторизации: 568315
+// GEO, Batumi`,
+//                 currency: "GEL",
+
+//             },
+//             {
+//                 date: ddmmyyyy("27.10.2024", "17:22:55"),
+//                 value: -26.19,
+//                 category: "other",
+//                 comment: `ПокупкаLIBRE 607 
+// Референс: 430113777963 
+// Код авторизации: 568313
+// GEO, Batumi`,
+//                 currency: "GEL",
+
+//             },
+//             {
+//                 date: ddmmyyyy("27.10.2024", "16:56:20"),
+//                 value: -14.00,
+//                 category: "other",
+//                 comment: `Покупкаi.m Dmitrii Novikov
+// Референс: 430112623564 
+// Код авторизации: 568312
+// GEO, Batumi`,
+//                 currency: "GEL",
+
+//             },
+//             {
+//                 date: ddmmyyyy("27.10.2024", "16:02:36"),
+//                 value: -232.36,
+//                 category: "other",
+//                 comment: `ПокупкаTEMU.COM 
+// Код авторизации: 568314
+// IRL, DUBLIN`,
+//                 currency: "GEL",
+
+//             },
+//             {
+//                 date: ddmmyyyy("27.10.2024", "13:24:41"),
+//                 value: -164.80,
+//                 category: "other",
+//                 comment: `ПокупкаLLC DIGITAL DISTRIBUTI 
+// Референс: 430113696031 
+// Код авторизации: 568311
+// GEO, TBILISI`,
+//                 currency: "GEL",
+
+//             },
+//             {
+//                 date: ddmmyyyy("26.10.2024", "19:46:59"),
+//                 value: -10.20,
+//                 category: "other",
+//                 comment: `ПокупкаCARREFOUR 
+// Референс: 430015509790 
+// Код авторизации: 568310
+// GEO, BATUMI`,
+//                 currency: "GEL",
+
+//             },
+//             {
+//                 date: ddmmyyyy("29.10.2024", "19:46:59"),
+//                 value: -25.00,
+//                 category: "other",
+//                 comment: `ПокупкаALALI 2008 LTD
+// Референс: 430306655362
+// Код авторизации: 568318
+// GEO, Batumi`,
+//                 currency: "GEL",
+
+//             },
+
+        ];
+
+        const pdf = await readFile(
+            path.resolve(__dirname, "./__fixtures__/test.pdf"),
+        );
+        const rows = await instance.import(pdf);
+        const actual10firstRows = rows.slice(0, 10);
+
+        expect(actual10firstRows).toEqual(expected10firstRows);
+    });
 
 });

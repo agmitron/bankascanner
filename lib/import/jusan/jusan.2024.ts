@@ -11,12 +11,15 @@ const FAKE_DATA = `10.10.1010
 export class JusanV2024 implements Importer {public async import(file: Buffer): Promise<Row[]> {
         const data = await pdf2data(file);
         const pieces = this._split(data.text);
-        // return pieces.map((r) => this._extractInfo(r));
+        // console.log('kdkd', pieces)
+        const result = pieces.map((r) => this._extractInfo(r));
+        console.log('Resulting array:', result); // Логируем результат
+        return result;
     }
 
     private _split(text: string): string[] {
         const data = `${text}\n${FAKE_DATA}`;
-        console.log("Data to split:", data);
+        
     
         
         const mainRe = /(\d{2}\.\d{2}\.\d{4}\s*\n\d{2}:\d{2}:\d{2}\n[\s\S]*?)(?=\d{2}\.\d{2}\.\d{4})/gm;
@@ -37,20 +40,18 @@ export class JusanV2024 implements Importer {public async import(file: Buffer): 
             const dateB = new Date(b.match(/(\d{2}\.\d{2}\.\d{4})/)[0]);
             return dateA.getTime() - dateB.getTime();
         });
-    
-        console.log("Matched and sorted pieces:", sortedMatches);
         return sortedMatches;
     }
     
-    _extractInfo(given: string): Row {
+    private _extractInfo(input: string): Row { try{
         const regex = /(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})\s+([\s\S]+?)\s+Референс:\s+(\d+)\s+Код авторизации:\s+(\d+)\s+([\s\S]*?)(\d+(\.\d{2})?)([A-Z]{3})/;
-
-        const match = given.match(regex);
-
+    
+        const match = input.match(regex);
+    
         if (!match) {
             throw new Error("No match found");
         }
-
+    
         const date = match[1];
         const time = match[2];
         const comment = match[3].trim();
@@ -59,10 +60,10 @@ export class JusanV2024 implements Importer {public async import(file: Buffer): 
         const additionalInfo = match[6].trim();
         const value = -parseFloat(match[7]);
         const currency = match[9];
-
+    
         // Формируем комментарий с правильными переносами строк
         const commentParts = [comment];
-
+    
         // Проверяем, если референс и код авторизации уникальны
         if (!commentParts.includes(reference)) {
             commentParts.push(reference);
@@ -73,17 +74,22 @@ export class JusanV2024 implements Importer {public async import(file: Buffer): 
         if (additionalInfo) {
             commentParts.push(additionalInfo);
         }
-
+    
         const formattedComment = commentParts.join('\n').trim(); // Соединяем с переносами
-
-        return {
+    
+        const row: Row = {
             date: ddmmyyyy(date, time),
             value,
             category: "other",
             comment: formattedComment,
             currency,
-        };
+        }
     
+        return row;
+    } catch (error) {
+        console.error('Error extracting info:', error);
+        return null; // Или обработайте ошибку другим способом
+    }
             
         }   
 }
