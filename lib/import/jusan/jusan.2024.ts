@@ -8,45 +8,51 @@ import { ddmmyyyy } from "~/date";
 const FAKE_DATA = `10.10.1010
 08:32`;
 
-export class JusanV2024 implements Importer {
+export class JusanV2024 implements Importer  {
     public async import(file: Buffer): Promise<Row[]> {
         const data = await pdf2data(file);
         const pieces = this._split(data.text);
+        
         const result = pieces.map((r) => {
-            const parsedPiece = this._extractInfo(r)
+            const parsedPiece = this._extractInfo(r);
             if (parsedPiece === null) {
-                console.log('nwnw', r)
+                console.log('null', r);
             }
             return parsedPiece;
-        });
+        }).filter((piece): piece is Row => piece !== null); 
+
         return result;
     }
 
     private _split(text: string): string[] {
         const data = `${text}\n${FAKE_DATA}`;
-
-
-
+    
         const mainRe = /(\d{2}\.\d{2}\.\d{4}\s*\n\d{2}:\d{2}:\d{2}\n[\s\S]*?)(?=\d{2}\.\d{2}\.\d{4})/gm;
-
-
         const lastRe = /(\d{2}\.\d{2}\.\d{4}\s*IM\s*.*?\d{2}\.\d{2}\.\d{4}[\s\S]*?)(?=\d{2}\.\d{2}\.\d{4}|$)/gm;
-
-
+    
         const mainMatches = data.match(mainRe) || [];
         const lastMatches = data.match(lastRe) || [];
-
-
+    
         const allMatches = [...mainMatches, ...lastMatches].map(match => match.trim());
-
-
+    
         const sortedMatches = allMatches.sort((a, b) => {
-            const dateA = new Date(a.match(/(\d{2}\.\d{2}\.\d{4})/)[0]);
-            const dateB = new Date(b.match(/(\d{2}\.\d{2}\.\d{4})/)[0]);
-            return dateA.getTime() - dateB.getTime();
+            const dateAMatch = a.match(/(\d{2}\.\d{2}\.\d{4})/);
+            const dateBMatch = b.match(/(\d{2}\.\d{2}\.\d{4})/);
+            
+            
+            if (dateAMatch && dateBMatch) {
+                const dateA = new Date(dateAMatch[0]);
+                const dateB = new Date(dateBMatch[0]);
+                return dateA.getTime() - dateB.getTime();
+            }
+    
+            
+            return 0;
         });
+    
         return sortedMatches;
     }
+    
 
     private _extractInfo(input: string): Row | null {
         try {
