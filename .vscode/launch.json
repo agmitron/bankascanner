@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Запуск тестов",
+            "name": "test",
             "program": "${workspaceFolder}/node_modules/.bin/jest",
             "args": ["--runInBand", "--watchAll=false"],
             "console": "integratedTerminal",
