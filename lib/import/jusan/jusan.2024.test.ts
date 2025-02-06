@@ -177,93 +177,95 @@ ALMATY`,
                 currency: "KZT",
 
            },
+           {
+            date: ddmmyyyy("26.08.2024", "11:37:31"),
+            value: -9000.00,
+            category: "other",
+            comment: `Перевод
+Перевод собственных средств на текущий счет 
+KZ11111PB11111111111 по курсу 482.90 KZT за 
+1 USD 
+Референс: zb1enV6Ba0zb`,
+            currency: "KZT",
+
+       },
             {
-                date: ddmmyyyy("28.10.2024", "20:04:09"),
-                value: -60.00,
+                date: ddmmyyyy("02.11.2024", "15:04:09"),
+                value: -17.50,
                 category: "other",
-                comment: `Покупкаmagti.com 
-Референс: 430216076790 
-Код авторизации: 568316
-GEO, Tbilisi`,
+                comment: `ПокупкаDONA 2005 LLC
+Референс: 430711024304
+Код авторизации: 568325
+GEO, Batumi`,
+                currency: "GEL",
+
+        },
+            {
+                date: ddmmyyyy("02.11.2024", "10:59:05"),
+                value: -420.00,
+                category: "other",
+                comment: `ПокупкаViktoria spa ltd
+Референс: 430706720026
+Код авторизации: 568324
+GEO, Batumi`,
+                currency: "GEL",
+
+       },
+            {
+                date: ddmmyyyy("04.11.2024", "11:22:56"),
+                value: -113.98,
+                category: "other",
+                comment: `ПокупкаCarrefour(BTM)
+Референс: 430941151128
+Код авторизации: 568326
+GEO, Batumi`,
                 currency: "GEL",
 
             },
-//             {
-//                 date: ddmmyyyy("28.10.2024", "10:59:32"),
-//                 value: -15.82,
-//                 category: "other",
-//                 comment: `ПокупкаNIKORA #745 
-// Референс: 430206188573 
-// Код авторизации: 568315
-// GEO, Batumi`,
-//                 currency: "GEL",
+            {
+                date: ddmmyyyy("04.11.2024", "11:22:56"),
+                value: -113.98,
+                category: "other",
+                comment: `ПокупкаCarrefour(BTM)
+Референс: 430941151128
+Код авторизации: 568326
+GEO, Batumi`,
+                currency: "GEL",
 
-//             },
-//             {
-//                 date: ddmmyyyy("27.10.2024", "17:22:55"),
-//                 value: -26.19,
-//                 category: "other",
-//                 comment: `ПокупкаLIBRE 607 
-// Референс: 430113777963 
-// Код авторизации: 568313
-// GEO, Batumi`,
-//                 currency: "GEL",
+            },
+            {
+                date: ddmmyyyy("04.11.2024", "11:22:56"),
+                value: -113.98,
+                category: "other",
+                comment: `ПокупкаCarrefour(BTM)
+Референс: 430941151128
+Код авторизации: 568326
+GEO, Batumi`,
+                currency: "GEL",
 
-//             },
-//             {
-//                 date: ddmmyyyy("27.10.2024", "16:56:20"),
-//                 value: -14.00,
-//                 category: "other",
-//                 comment: `Покупкаi.m Dmitrii Novikov
-// Референс: 430112623564 
-// Код авторизации: 568312
-// GEO, Batumi`,
-//                 currency: "GEL",
+            },
+            {
+                date: ddmmyyyy("08.11.2024", "20:11:59"),
+                value: -6.00,
+                category: "other",
+                comment: `Покупка33 VENDING
+Референс: 431316674679
+Код авторизации: 568327
+GEO, TBILISI`,
+                currency: "GEL",
 
-//             },
-//             {
-//                 date: ddmmyyyy("27.10.2024", "16:02:36"),
-//                 value: -232.36,
-//                 category: "other",
-//                 comment: `ПокупкаTEMU.COM 
-// Код авторизации: 568314
-// IRL, DUBLIN`,
-//                 currency: "GEL",
+            },
+            {
+                date: ddmmyyyy("08.11.2024", "20:11:59"),
+                value: -6.00,
+                category: "other",
+                comment: `Покупка33 VENDING
+Референс: 431316674679
+Код авторизации: 568327
+GEO, TBILISI`,
+                currency: "GEL",
 
-//             },
-//             {
-//                 date: ddmmyyyy("27.10.2024", "13:24:41"),
-//                 value: -164.80,
-//                 category: "other",
-//                 comment: `ПокупкаLLC DIGITAL DISTRIBUTI 
-// Референс: 430113696031 
-// Код авторизации: 568311
-// GEO, TBILISI`,
-//                 currency: "GEL",
-
-//             },
-//             {
-//                 date: ddmmyyyy("26.10.2024", "19:46:59"),
-//                 value: -10.20,
-//                 category: "other",
-//                 comment: `ПокупкаCARREFOUR 
-// Референс: 430015509790 
-// Код авторизации: 568310
-// GEO, BATUMI`,
-//                 currency: "GEL",
-
-//             },
-//             {
-//                 date: ddmmyyyy("29.10.2024", "19:46:59"),
-//                 value: -25.00,
-//                 category: "other",
-//                 comment: `ПокупкаALALI 2008 LTD
-// Референс: 430306655362
-// Код авторизации: 568318
-// GEO, Batumi`,
-//                 currency: "GEL",
-
-//             },
+            },
 
         ];
 
