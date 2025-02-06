@@ -1,5 +1,6 @@
 import * as kapitalbank from "~/import/kapitalbank";
 import * as tinkoff from "~/import/tinkoff";
+import * as jusan from "~/import/jusan";
 import { UnknownBankError, UnknownVersionError } from "~/error";
 import type { Row } from "~/row";
 import { DEFAULT_VERSION, type Versioner } from "~/version";
@@ -7,6 +8,7 @@ import { DEFAULT_VERSION, type Versioner } from "~/version";
 export const versioners: Record<string, Versioner<string>> = {
 	kapitalbank: new kapitalbank.Versioner(),
 	tinkoff: new tinkoff.Versioner(),
+	jusan: new jusan.Versioner(),
 } as const;
 
 export interface Importer {

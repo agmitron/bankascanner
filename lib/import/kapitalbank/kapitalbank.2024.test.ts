@@ -3,9 +3,9 @@ import path from "node:path";
 import * as fs from "node:fs/promises";
 import { test, describe, expect } from "vitest";
 import { KapitalBankV2024 } from "./kapitalbank.2024";
-import type { Row } from "~/entities/row";
+import type { Row } from "~/row";
 import { ddmmyyyy } from "~/date";
-import type { Category } from "~/entities/category";
+import type { Category } from "~/category";
 
 describe("Kapitalbank", () => {
 	const instance = new KapitalBankV2024();
