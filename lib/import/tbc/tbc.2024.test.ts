@@ -1,0 +1,269 @@
+import { describe, expect, test } from "vitest";
+import type { Row } from "~/row";
+import { ddmmyyyy } from "~/date";
+import { TbcV2024 } from "./tbc.2024";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
+describe("Tbc", () => {
+	const instance = new TbcV2024();
+
+	test("_split", () => {
+		const given = `02/11/2024POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+7.70197.59
+03/11/2024POS - Vip Pay*YANDEX.GO, 3.70 GEL, Nov 2 2024 5:57PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+3.70193.89
+04/11/2024POS - Vip Pay*YANDEX.GO, 4.80 GEL, Nov 3 2024 2:05PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+4.80189.09
+04/11/2024POS - Vip Pay*YANDEX.GO, 3.20 GEL, Nov 3 2024 2:24PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+3.20185.89
+06/11/2024POS wallet - GLDANI & CO, 10.00 GEL, Nov 4 2024 9:54PM,
+რესტორანი, კაფე, ბარი, MCC: 5812, MC, 515881******0339
+თიბისი ბანკის MC ბარათებით სავაჭრო ობიექტებში სხვა 
+ბანკის ტერმინალებში, TBCBGE22, 
+GE00TB0000000000000000
+10.00175.89
+06/11/2024Private transfer within TBC
+ალექსანდრე კაკაბაძე, TBCBGE22, 
+GE00TB0000000000000000
+98.8877.01
+08/11/2024სატარიფო პაკეტის ძირითადი საკომისიო, 07/11/2024/
+ყოველთვიური/ნაკრები10
+დებიტორები - სატარიფო პაკეტის საკომისიო, TBCBGE22, 
+GE00TB0000000000000000
+10.0067.01
+08/11/2024POS - LUKA NADIRADZE, 3.60 GEL, Nov 6 2024 12:21PM,
+სასურსათო მაღაზიები, MCC: 5411, MC, 515881******0339
+თიბისი ბანკის MC ბარათებით სავაჭრო ობიექტებში სხვა 
+ბანკის ტერმინალებში, TBCBGE22, 
+GE00TB0000000000000000
+3.6063.41
+08/11/2024POS - LUKA NADIRADZE, 5.25 GEL, Nov 6 2024 12:22PM,
+სასურსათო მაღაზიები, MCC: 5411, MC, 515881******0339
+თიბისი ბანკის MC ბარათებით სავაჭრო ობიექტებში სხვა 
+ბანკის ტერმინალებში, TBCBGE22, 
+GE00TB0000000000000000
+5.2558.16
+08/11/2024POS wallet - cork coffee, 20.00 GEL, Nov 6 2024 11:50AM,
+რესტორანი, კაფე, ბარი, MCC: 5812, MC, 515881******0339
+თიბისი ბანკის MC ბარათებით სავაჭრო ობიექტებში სხვა 
+ბანკის ტერმინალებში, TBCBGE22, 
+GE00TB0000000000000000
+20.0038.16`;
+
+		const expected = [
+			`02/11/2024POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+7.70197.59`,
+			`03/11/2024POS - Vip Pay*YANDEX.GO, 3.70 GEL, Nov 2 2024 5:57PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+3.70193.89`,
+			`04/11/2024POS - Vip Pay*YANDEX.GO, 4.80 GEL, Nov 3 2024 2:05PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+4.80189.09`,
+			`04/11/2024POS - Vip Pay*YANDEX.GO, 3.20 GEL, Nov 3 2024 2:24PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+3.20185.89`,
+			`06/11/2024POS wallet - GLDANI & CO, 10.00 GEL, Nov 4 2024 9:54PM,
+რესტორანი, კაფე, ბარი, MCC: 5812, MC, 515881******0339
+თიბისი ბანკის MC ბარათებით სავაჭრო ობიექტებში სხვა 
+ბანკის ტერმინალებში, TBCBGE22, 
+GE00TB0000000000000000
+10.00175.89`,
+			`06/11/2024Private transfer within TBC
+ალექსანდრე კაკაბაძე, TBCBGE22, 
+GE00TB0000000000000000
+98.8877.01`,
+			`08/11/2024სატარიფო პაკეტის ძირითადი საკომისიო,`,
+			`07/11/2024/
+ყოველთვიური/ნაკრები10
+დებიტორები - სატარიფო პაკეტის საკომისიო, TBCBGE22, 
+GE00TB0000000000000000
+10.0067.01`,
+			`08/11/2024POS - LUKA NADIRADZE, 3.60 GEL, Nov 6 2024 12:21PM,
+სასურსათო მაღაზიები, MCC: 5411, MC, 515881******0339
+თიბისი ბანკის MC ბარათებით სავაჭრო ობიექტებში სხვა 
+ბანკის ტერმინალებში, TBCBGE22, 
+GE00TB0000000000000000
+3.6063.41`,
+			`08/11/2024POS - LUKA NADIRADZE, 5.25 GEL, Nov 6 2024 12:22PM,
+სასურსათო მაღაზიები, MCC: 5411, MC, 515881******0339
+თიბისი ბანკის MC ბარათებით სავაჭრო ობიექტებში სხვა 
+ბანკის ტერმინალებში, TBCBGE22, 
+GE00TB0000000000000000
+5.2558.16`,
+			`08/11/2024POS wallet - cork coffee, 20.00 GEL, Nov 6 2024 11:50AM,
+რესტორანი, კაფე, ბარი, MCC: 5812, MC, 515881******0339
+თიბისი ბანკის MC ბარათებით სავაჭრო ობიექტებში სხვა 
+ბანკის ტერმინალებში, TBCBGE22, 
+GE00TB0000000000000000
+20.0038.16`,
+		];
+
+		const actual = instance["_split"](given);
+
+		expect(actual).toMatchObject(expected);
+		expect(actual.length).toBe(expected.length);
+	});
+	test("_extractInfo", () => {
+		const given = `02/11/2024POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000
+7.70197.59`;
+
+		const expected: Row = {
+			date: ddmmyyyy("02.11.2024"),
+			value: -7.70197,
+			category: "other",
+			comment: `POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000`,
+			currency: "GEL",
+		};
+
+		const actual = instance["_extractInfo"](given);
+
+		expect(actual).toMatchObject(expected);
+	});
+	test("import", async () => {
+		const expected10firstRows: Row[] = [
+			{
+				date: ddmmyyyy("2024-10-03"),
+				value: -11.50385,
+				category: "other",
+				comment: `POS - Vip Pay*YANDEX.GO, 11.50 GEL, Oct 2 2024 7:21PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-04"),
+				value: -69.00316,
+				category: "other",
+				comment: `Private transfer within TBC
+ალექსანდრე კაკაბაძე, TBCBGE22, 
+GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-06"),
+				value: -5.2031,
+				category: "other",
+				comment: `POS - Vip Pay*YANDEX.GO, 5.20 GEL, Oct 5 2024 3:24PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-06"),
+				value: -4.70306,
+				category: "other",
+				comment: `POS - Vip Pay*YANDEX.GO, 4.70 GEL, Oct 5 2024 3:47PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-09"),
+				value: -271.00301,
+				category: "other",
+				comment: `Currency Exchange (კროს-კურსი: 1 USD = 2.7100 GEL)
+ალეკსეი გმიტრონ, TBCBGE22, GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-10"),
+				value: -5.00296,
+				category: "other",
+				comment: `Check
+ANASTASIIA IVANOVA, BAGAGE22, 
+GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-10"),
+				value: -1.00295,
+				category: "other",
+				comment: `საკომისიო გადარიცხვებზე სხვა ბანკებში (GEL)
+საკომისიო შემოსავალი - ფიზიკური პირების გადარიცხვები, 
+TBCBGE22, GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-10"),
+				value: -65.0023,
+				category: "other",
+				comment: `Check
+ANASTASIIA IVANOVA, BAGAGE22, 
+GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-10"),
+				value: -1.00229,
+				category: "other",
+				comment: `საკომისიო გადარიცხვებზე სხვა ბანკებში (GEL)
+საკომისიო შემოსავალი - ფიზიკური პირების გადარიცხვები, 
+TBCBGE22, GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+			{
+				date: ddmmyyyy("2024-10-14"),
+				value: -4.50225,
+				category: "other",
+				comment: `POS - Vip Pay*YANDEX.GO, 4.50 GEL, Oct 13 2024 1:35PM,
+ტრანსპორტი, MCC: 4121, MC, 515881******0339
+TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS 
+მერჩანტებში შესრულებული, TBCBGE22, 
+GE00TB0000000000000000`,
+				currency: "GEL",
+			},
+		];
+
+		const pdf = await readFile(
+			path.resolve(__dirname, "./__fixtures__/test.pdf"),
+		);
+		const rows = await instance.import(pdf);
+		const actual10firstRows = rows.slice(0, 10);
+
+		expect(actual10firstRows).toEqual(expected10firstRows);
+	});
+});
