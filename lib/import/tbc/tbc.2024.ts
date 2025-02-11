@@ -3,7 +3,6 @@ import type { Importer } from "~/import";
 import type { Row } from "~/row";
 import { ddmmyyyy } from "~/date";
 
-
 export class TbcV2024 implements Importer {
 	public async import(file: Buffer): Promise<Row[]> {
 		const data = await pdf2data(file);
@@ -11,10 +10,9 @@ export class TbcV2024 implements Importer {
 		console.log(pieces);
 
 		return pieces
-			.filter(r => this._isValidTransaction(r))
+			.filter((r) => this._isValidTransaction(r))
 			.map((r) => this._extractInfo(r));
 	}
-
 
 	private _isValidTransaction(input: string): boolean {
 		const regex = /(\d{2}\/\d{2}\/\d{4})([\s\S]*?)(\d+\.\d{5})/;
@@ -25,13 +23,11 @@ export class TbcV2024 implements Importer {
 		const regex = /(\d{2}\/\d{2}\/\d{4}.*?)(?=\d{2}\/\d{2}\/\d{4}|$)/gs;
 		const matches = text.match(regex);
 
-		return matches ? matches.map(match => match.trim()) : [];
+		return matches ? matches.map((match) => match.trim()) : [];
 	}
 
 	private _extractInfo(input: string): Row {
-
-		const regex =
-			/(\d{2}\/\d{2}\/\d{4})([\s\S]*?)(\d+\.\d{5})/;
+		const regex = /(\d{2}\/\d{2}\/\d{4})([\s\S]*?)(\d+\.\d{5})/;
 
 		const match = input.match(regex);
 
@@ -39,10 +35,9 @@ export class TbcV2024 implements Importer {
 			throw new Error("Input does not match the expected format");
 		}
 
-		const date = match[1].trim().replace(/\//g, '.');
+		const date = match[1].trim().replace(/\//g, ".");
 		const comment = match[2].trim();
 		const value = -Number.parseFloat(match[3]);
-
 
 		const row: Row = {
 			date: ddmmyyyy(date),
@@ -51,7 +46,6 @@ export class TbcV2024 implements Importer {
 			comment: comment,
 			currency: "GEL",
 		};
-		return row
+		return row;
 	}
-
 }
