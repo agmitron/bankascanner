@@ -42,11 +42,11 @@ npm run test -- tinkoff # will test tinkoff.test.ts
 
 - [x] Kapitalbank 
 - [x] Tinkoff
+- [x] Jusan
 
 ## Coming soon
 
 - [ ] Sberbank
-- [ ] Jusan
 - [ ] TBC
 - [ ] Kaspi
 - [ ] Permata Bank
