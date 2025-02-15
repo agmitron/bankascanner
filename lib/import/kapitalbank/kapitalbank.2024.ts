@@ -1,6 +1,6 @@
 import pdf2data from "pdf-parse";
-import type { Importer } from "~/import";
-import type { Row } from "~/row";
+import type { Importer, Result } from "~/import";
+import type { Operation } from "~/operation";
 import {
 	type Category,
 	type CategoryDetectors,
@@ -32,11 +32,26 @@ interface Extractor {
 export class KapitalBankV2024 implements Importer {
 	private _profile: Profile | null = null;
 
-	public async import(file: Buffer): Promise<Row[]> {
+	public async import(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const prepared = this._prepare(data.text);
-		const rows = this._split(prepared);
-		return rows.map((r) => this._parseRow(r));
+		const pieces = this._split(prepared);
+
+		const rows: Operation[] = [];
+		const failed: string[] = [];
+		for (const piece of pieces) {
+			const row = this._parseRow(piece);
+			if (row) {
+				rows.push(row);
+			} else {
+				failed.push(piece);
+			}
+		}
+
+		return {
+			succeeded: rows,
+			failed,
+		};
 	}
 
 	private _prepare(data: string): string {
@@ -95,9 +110,10 @@ export class KapitalBankV2024 implements Importer {
 		return data.replaceAll(r, "");
 	}
 
-	private _parseRow(line: string): Row {
+	private _parseRow(line: string): Operation | null {
 		if (!this._profile) {
-			throw new Error("Profile is not set");
+			console.error("Profile is not set");
+			return null;
 		}
 
 		const date = this._getDate(line);

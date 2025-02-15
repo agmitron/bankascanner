@@ -3,7 +3,7 @@ import path from "node:path";
 import * as fs from "node:fs/promises";
 import { test, describe, expect } from "vitest";
 import { KapitalBankV2024 } from "./kapitalbank.2024";
-import type { Row } from "~/row";
+import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import type { Category } from "~/category";
 
@@ -383,7 +383,7 @@ e68e7f5f21c7`,
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
 
-		const expectedFirst10rows: Row[] = [
+		const expectedFirst10rows: Operation[] = [
 			{
 				comment: `Списание по опер в TOO "TAMERLAN BI" SLIP No 33207`,
 				value: -11.54,
@@ -459,7 +459,7 @@ e68e7f5f21c7`,
 			},
 		];
 
-		const expectedLast10rows: Row[] = [
+		const expectedLast10rows: Operation[] = [
 			{
 				comment: `Списание по опер в NIKORA 293 SLIP No 30900`,
 				date: ddmmyyyy("06.09.2024"),
@@ -532,10 +532,10 @@ e68e7f5f21c7`,
 			},
 		];
 
-		const actual = await instance.import(data);
+		const { succeeded: rows } = await instance.import(data);
 
-		const first10rows = actual.slice(0, 10);
-		const last10rows = actual.slice(-10);
+		const first10rows = rows.slice(0, 10);
+		const last10rows = rows.slice(-10);
 
 		expect(first10rows.map((r) => r.value)).toMatchObject(
 			expectedFirst10rows.map((r) => r.value),

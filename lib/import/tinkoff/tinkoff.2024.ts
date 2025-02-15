@@ -1,18 +1,34 @@
 import pdf2data from "pdf-parse";
 import { otherCurrency } from "~/currency";
-import type { Importer } from "~/import";
-import type { Row } from "~/row";
+import type { Importer, Result } from "~/import";
 import { ddmmyyyy } from "~/date";
+import type { Operation } from "~/operation";
 
 // date for correct data match
 const FAKE_DATE = `10.10.1010
 08:32`;
 
 export class TinkoffV2024 implements Importer {
-	public async import(file: Buffer): Promise<Row[]> {
+	public async import(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
-		return pieces.map((r) => this._extractInfo(r));
+
+		const rows: Operation[] = [];
+		const failed: string[] = [];
+
+		for (const piece of pieces) {
+			const row = this._extractInfo(piece);
+			if (row) {
+				rows.push(row);
+			} else {
+				failed.push(piece);
+			}
+		}
+
+		return {
+			succeeded: rows,
+			failed,
+		};
 	}
 
 	private _split(text: string): string[] {
@@ -33,13 +49,14 @@ export class TinkoffV2024 implements Importer {
 		return pieces;
 	}
 
-	private _extractInfo(input: string): Row {
+	private _extractInfo(input: string): Operation | null {
 		const regex =
 			/((\d{2}\.\d{2}\.\d{4})\s*(\d{2}:\d{2})\s*){2}((\+|\-)(\d+\s?\d+.\d{2})\s(.)){2}((.*\n?)*)/;
 		const match = input.match(regex);
 
 		if (!match) {
-			throw new Error("Input does not match the expected format");
+			console.error("Input does not match the expected format");
+			return null;
 		}
 
 		const dateStr = match[2].trim();
@@ -51,7 +68,8 @@ export class TinkoffV2024 implements Importer {
 
 		const card = comment.match(/(?=(.*\s?)(\d{4}|—))/);
 		if (!card) {
-			throw new Error("Card number not found");
+			console.error("Card number not found");
+			return null;
 		}
 
 		const commentWithoutCard = comment.replace(card[2], "").trim();
@@ -61,7 +79,7 @@ export class TinkoffV2024 implements Importer {
 			value = value * -1;
 		}
 
-		const row: Row = {
+		const row: Operation = {
 			date: ddmmyyyy(dateStr, time),
 			value,
 			category: "other",

@@ -1,7 +1,7 @@
 import pdf2data from "pdf-parse";
 import { otherCurrency } from "~/currency";
-import type { Importer } from "~/import";
-import type { Row } from "~/row";
+import type { Importer, Result } from "~/import";
+import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 
 // date for correct data match
@@ -9,18 +9,26 @@ const FAKE_DATE = `10.10.1010
 08:32`;
 
 export class JusanV2024 implements Importer {
-	public async import(file: Buffer): Promise<Row[]> {
+	public async import(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
 
-		const result = pieces
-			.map((r) => {
-				const parsedPiece = this._extractInfo(r);
-				return parsedPiece;
-			})
-			.filter((piece): piece is Row => piece !== null);
+		const rows: Operation[] = [];
+		const failed: string[] = [];
 
-		return result;
+		for (const piece of pieces) {
+			const row = this._extractInfo(piece);
+			if (row) {
+				rows.push(row);
+			} else {
+				failed.push(piece);
+			}
+		}
+
+		return {
+			succeeded: rows,
+			failed,
+		};
 	}
 
 	private _split(text: string): string[] {
@@ -54,7 +62,7 @@ export class JusanV2024 implements Importer {
 		return sortedMatches;
 	}
 
-	private _extractInfo(input: string): Row | null {
+	private _extractInfo(input: string): Operation | null {
 		try {
 			const regex =
 				/(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})\s+([\s\S]+?)\s+Референс:\s+(\d+)\s+Код авторизации:\s+(\d+)\s+([\s\S]*?)(\d+(\.\d{2})?)([A-Z]{3})/;
@@ -89,7 +97,7 @@ export class JusanV2024 implements Importer {
 
 			const formattedComment = commentParts.join("\n").trim();
 
-			const row: Row = {
+			const row: Operation = {
 				date: ddmmyyyy(date, time),
 				value,
 				category: "other",
@@ -103,7 +111,7 @@ export class JusanV2024 implements Importer {
 			return null;
 		}
 	}
-	private _extractInfo2(data: string): Row | null {
+	private _extractInfo2(data: string): Operation | null {
 		const regex =
 			/(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})\s+([\s\S]*)^(\d+\.\d{2})(\w{3})/m;
 
@@ -115,7 +123,7 @@ export class JusanV2024 implements Importer {
 
 		const [_, date, time, text, value, currency] = match;
 
-		const extractedRow: Row = {
+		const extractedRow: Operation = {
 			date: ddmmyyyy(date, time),
 			comment: text.trim(),
 			value: -Number.parseFloat(value),
