@@ -5,9 +5,9 @@ A tool to convert your PDF bank statements to more convenient formats as JSON, C
 ## Usage
 
 ```bash
-npx tsx ./cli --in path/to/in.pdf --out path/to/out.json --bank=<bank_name>
+npx tsx ./cli --in path/to/in.pdf --out path/to/out.json --bank <bank_name>
 # or 
-npm start -- --in path/to/in.pdf --out path/to/out.json --bank=<bank_name>
+npm start -- --in path/to/in.pdf --out path/to/out.json --bank <bank_name>
 ```
 
 ## Development
