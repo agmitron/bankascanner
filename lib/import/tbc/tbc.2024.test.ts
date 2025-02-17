@@ -138,9 +138,7 @@ GE00TB0000000000000000
 		const given = `Opening Balance396.55GEL`;
 		const expected = `GEL`;
 		const actual = instance["_determineCurrency"](given);
-
-
-	})
+	});
 	test("_extractInfo", () => {
 		const given = `02/11/2024POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
@@ -161,11 +159,12 @@ GE00TB0000000000000000`,
 			currency: "GEL",
 		};
 
-		const actual = instance["_extractInfo"](given, previousBalance);
+		const actual = instance["_extractInfo"](given);
 
 		expect(actual).toMatchObject(expected);
 	});
 	test("import", async () => {
+		const instance = new TBCV2024(previousBalance);
 		const expected10firstRows: Row[] = [
 			{
 				date: ddmmyyyy("2024-10-03"),
