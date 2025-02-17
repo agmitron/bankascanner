@@ -5,14 +5,17 @@ import { ddmmyyyy } from "~/date";
 
 export class TBCV2024 implements Importer {
 	private previousBalance: number;
+	private _currency: string;
+
 
 	constructor(previousBalance: number) {
 		this.previousBalance = previousBalance;
+		this._currency = "";
 	}
 	public async import(file: Buffer): Promise<Row[]> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
-
+		this._determineCurrency
 		return pieces
 			.filter((r) => this._isValidTransaction(r))
 			.map((r) => this._extractInfo(r, this.previousBalance));
@@ -35,7 +38,9 @@ export class TBCV2024 implements Importer {
 	}
 
 	private _extractInfo(input: string, previousBalance: number): Row {
-		const regex = /(\d{2}\/\d{2}\/\d{4})(([\s\S]*?))(?=\d+\.\d{5})(\d+\.\d{2})(\d+\.\d{2})/;
+
+		const regex =
+			/(\d{2}\/\d{2}\/\d{4})(([\s\S]*?))(?=\d+\.\d{5})(\d+\.\d{2})(\d+\.\d{2})/;
 
 		const match = input.match(regex);
 
@@ -49,19 +54,35 @@ export class TBCV2024 implements Importer {
 		const currentBalanceNum = Number.parseFloat(currentBalance);
 
 		const transactionValue = Number.parseFloat(match[4]);
-		const value = (currentBalanceNum > previousBalance ?
-			transactionValue :
-			-transactionValue
-		);
+		const value =
+			currentBalanceNum > previousBalance
+				? transactionValue
+				: -transactionValue;
 
 		const row: Row = {
 			date: ddmmyyyy(date),
 			value: Number(value.toFixed(2)),
 			category: "other",
 			comment: comment,
-			currency: "GEL",
+			currency: this._currency,
 		};
 
 		return row;
 	}
+	private _determineCurrency(input: string): string {
+		const currencyRegex = /(?:Opening Balance|Closing Balance)[^\d]*(\d[\d,]*\.\d{2})\s*([A-Z]{3})/;
+		const match = input.match(currencyRegex);
+
+		if (match) {
+			this._currency = match[2];
+			console.log("Extracted currency:", this._currency);
+		} else {
+			console.log("No currency found");
+			this._currency = "";
+		}
+
+		return this._currency;
+	}
+
+
 }

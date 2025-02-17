@@ -134,6 +134,13 @@ GE00TB0000000000000000
 		expect(actual).toMatchObject(expected);
 		expect(actual.length).toBe(expected.length);
 	});
+	test("_determineCurrency", () => {
+		const given = `Opening Balance396.55GEL`;
+		const expected = `GEL`;
+		const actual = instance["_determineCurrency"](given);
+
+
+	})
 	test("_extractInfo", () => {
 		const given = `02/11/2024POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
@@ -144,7 +151,7 @@ GE00TB0000000000000000
 		const previousBalance = 200;
 		const expected: Row = {
 			date: ddmmyyyy("02.11.2024"),
-			value: -7.70,
+			value: -7.7,
 			category: "other",
 			comment: `POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
@@ -162,7 +169,7 @@ GE00TB0000000000000000`,
 		const expected10firstRows: Row[] = [
 			{
 				date: ddmmyyyy("2024-10-03"),
-				value: -11.50,
+				value: -11.5,
 				category: "other",
 				comment: `POS - Vip Pay*YANDEX.GO, 11.50 GEL, Oct 2 2024 7:21PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
@@ -173,7 +180,7 @@ GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-04"),
-				value: -69.00,
+				value: -69.0,
 				category: "other",
 				comment: `Private transfer within TBC
 ალექსანდრე კაკაბაძე, TBCBGE22, 
@@ -182,7 +189,7 @@ GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-06"),
-				value: -5.20,
+				value: -5.2,
 				category: "other",
 				comment: `POS - Vip Pay*YANDEX.GO, 5.20 GEL, Oct 5 2024 3:24PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
@@ -193,7 +200,7 @@ GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-06"),
-				value: -4.70,
+				value: -4.7,
 				category: "other",
 				comment: `POS - Vip Pay*YANDEX.GO, 4.70 GEL, Oct 5 2024 3:47PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
@@ -204,7 +211,7 @@ GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-09"),
-				value: -271.00,
+				value: -271.0,
 				category: "other",
 				comment: `Currency Exchange (კროს-კურსი: 1 USD = 2.7100 GEL)
 ალეკსეი გმიტრონ, TBCBGE22, GE00TB0000000000000000`,
@@ -212,7 +219,7 @@ GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-10"),
-				value: -5.00,
+				value: -5.0,
 				category: "other",
 				comment: `Check
 ANASTASIIA IVANOVA, BAGAGE22, 
@@ -221,7 +228,7 @@ GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-10"),
-				value: -1.00,
+				value: -1.0,
 				category: "other",
 				comment: `საკომისიო გადარიცხვებზე სხვა ბანკებში (GEL)
 საკომისიო შემოსავალი - ფიზიკური პირების გადარიცხვები, 
@@ -230,7 +237,7 @@ TBCBGE22, GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-10"),
-				value: -65.00,
+				value: -65.0,
 				category: "other",
 				comment: `Check
 ANASTASIIA IVANOVA, BAGAGE22, 
@@ -239,7 +246,7 @@ GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-10"),
-				value: -1.00,
+				value: -1.0,
 				category: "other",
 				comment: `საკომისიო გადარიცხვებზე სხვა ბანკებში (GEL)
 საკომისიო შემოსავალი - ფიზიკური პირების გადარიცხვები, 
@@ -248,7 +255,7 @@ TBCBGE22, GE00TB0000000000000000`,
 			},
 			{
 				date: ddmmyyyy("2024-10-14"),
-				value: -4.50,
+				value: -4.5,
 				category: "other",
 				comment: `POS - Vip Pay*YANDEX.GO, 4.50 GEL, Oct 13 2024 1:35PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
