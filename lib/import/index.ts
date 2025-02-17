@@ -11,7 +11,6 @@ export const versioners: Record<string, Versioner<string>> = {
 	tinkoff: new tinkoff.Versioner(),
 	jusan: new jusan.Versioner(),
 	TBC: new tbc.Versioner(),
-
 } as const;
 
 export interface Importer {

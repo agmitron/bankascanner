@@ -4,14 +4,18 @@ import type { Row } from "~/row";
 import { ddmmyyyy } from "~/date";
 
 export class TBCV2024 implements Importer {
+	private previousBalance: number;
+
+	constructor(previousBalance: number) {
+		this.previousBalance = previousBalance;
+	}
 	public async import(file: Buffer): Promise<Row[]> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
-		
 
 		return pieces
 			.filter((r) => this._isValidTransaction(r))
-			.map((r) => this._extractInfo(r));
+			.map((r) => this._extractInfo(r, this.previousBalance));
 	}
 
 	private _isValidTransaction(input: string): boolean {
@@ -24,14 +28,14 @@ export class TBCV2024 implements Importer {
 		const matches = text.match(regex);
 
 		if (matches) {
-			return matches.map((match) => match.trim())
-		  }
-		  
-		  return [];
+			return matches.map((match) => match.trim());
+		}
+
+		return [];
 	}
 
-	private _extractInfo(input: string): Row {
-		const regex = /(\d{2}\/\d{2}\/\d{4})([\s\S]*?)(\d+\.\d{5})/;
+	private _extractInfo(input: string, previousBalance: number): Row {
+		const regex = /(\d{2}\/\d{2}\/\d{4})(([\s\S]*?))(?=\d+\.\d{5})(\d+\.\d{2})(\d+\.\d{2})/;
 
 		const match = input.match(regex);
 
@@ -41,15 +45,23 @@ export class TBCV2024 implements Importer {
 
 		const date = match[1].trim().replace(/\//g, ".");
 		const comment = match[2].trim();
-		const value = -Number.parseFloat(match[3]);
+		const currentBalance = Number.parseFloat(match[5]).toFixed(2);
+		const currentBalanceNum = Number.parseFloat(currentBalance);
+
+		const transactionValue = Number.parseFloat(match[4]);
+		const value = (currentBalanceNum > previousBalance ?
+			transactionValue :
+			-transactionValue
+		);
 
 		const row: Row = {
 			date: ddmmyyyy(date),
-			value,
+			value: Number(value.toFixed(2)),
 			category: "other",
 			comment: comment,
 			currency: "GEL",
 		};
+
 		return row;
 	}
 }
