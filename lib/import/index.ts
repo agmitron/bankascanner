@@ -21,7 +21,7 @@ export class ParseError extends Error {
 	}
 }
 
-export type Result = Either<ParseError, Operation>[]
+export type Result = Either<ParseError, Operation>[];
 
 export interface Importer {
 	import(file: Buffer): Promise<Result>;
