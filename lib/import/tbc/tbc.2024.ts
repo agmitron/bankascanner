@@ -3,11 +3,11 @@ import type { Importer } from "~/import";
 import type { Row } from "~/row";
 import { ddmmyyyy } from "~/date";
 
-export class TbcV2024 implements Importer {
+export class TBCV2024 implements Importer {
 	public async import(file: Buffer): Promise<Row[]> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
-		console.log(pieces);
+		
 
 		return pieces
 			.filter((r) => this._isValidTransaction(r))
@@ -23,7 +23,11 @@ export class TbcV2024 implements Importer {
 		const regex = /(\d{2}\/\d{2}\/\d{4}.*?)(?=\d{2}\/\d{2}\/\d{4}|$)/gs;
 		const matches = text.match(regex);
 
-		return matches ? matches.map((match) => match.trim()) : [];
+		if (matches) {
+			return matches.map((match) => match.trim())
+		  }
+		  
+		  return [];
 	}
 
 	private _extractInfo(input: string): Row {

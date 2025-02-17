@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
 import type { Row } from "~/row";
 import { ddmmyyyy } from "~/date";
-import { TbcV2024 } from "./tbc.2024";
+import { TBCV2024 } from "./tbc.2024";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-describe("Tbc", () => {
-	const instance = new TbcV2024();
+describe("TBC", () => {
+	const instance = new TBCV2024();
 
 	test("_split", () => {
 		const given = `02/11/2024POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
