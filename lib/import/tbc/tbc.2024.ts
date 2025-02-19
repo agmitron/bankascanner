@@ -4,17 +4,16 @@ import type { Row } from "~/row";
 import { ddmmyyyy } from "~/date";
 
 export class TBCV2024 implements Importer {
-	private previousBalance: number;
+	private previousBalance = 0;
 	private _currency: string;
 
 	constructor(previousBalance: number) {
-		this.previousBalance = previousBalance;
+		// this.previousBalance = previousBalance;
 		this._currency = "";
 	}
 	public async import(file: Buffer): Promise<Row[]> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
-
 
 		this._determineCurrency(data.text);
 
@@ -61,7 +60,6 @@ export class TBCV2024 implements Importer {
 				? transactionValue
 				: -transactionValue;
 
-
 		this.previousBalance = currentBalanceNum;
 
 		const row: Row = {
@@ -81,7 +79,6 @@ export class TBCV2024 implements Importer {
 
 		if (match) {
 			this._currency = match[2];
-			console.log("Extracted currency:", this._currency);
 		} else {
 			console.log("No currency found");
 			this._currency = "";

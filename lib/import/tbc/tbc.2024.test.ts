@@ -149,7 +149,7 @@ GE00TB0000000000000000
 		const previousBalance = 200;
 		const expected: Row = {
 			date: ddmmyyyy("02.11.2024"),
-			value: -7.7,
+			value: 7.7,
 			category: "other",
 			comment: `POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
@@ -168,7 +168,7 @@ GE00TB0000000000000000`,
 		const expected10firstRows: Row[] = [
 			{
 				date: ddmmyyyy("2024-10-03"),
-				value: -11.5,
+				value: 11.5,
 				category: "other",
 				comment: `POS - Vip Pay*YANDEX.GO, 11.50 GEL, Oct 2 2024 7:21PM,
 ტრანსპორტი, MCC: 4121, MC, 515881******0339
