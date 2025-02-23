@@ -10,7 +10,7 @@ export const versioners: Record<string, Versioner<string>> = {
 	kapitalbank: new kapitalbank.Versioner(),
 	tinkoff: new tinkoff.Versioner(),
 	jusan: new jusan.Versioner(),
-	TBC: new tbc.Versioner(),
+	tbc: new tbc.Versioner(),
 } as const;
 
 export interface Importer {
