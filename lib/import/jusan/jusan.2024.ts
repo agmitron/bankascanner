@@ -14,7 +14,7 @@ export class JusanV2024 implements Importer {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
 
-		const result = pieces.map((r) => this._parsePiece(r))
+		const result = pieces.map((r) => this._parsePiece(r));
 		return result;
 	}
 

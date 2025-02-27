@@ -46,7 +46,7 @@ export class TBCV2024 implements Importer {
 		const match = piece.match(regex);
 
 		if (!match) {
-			return left({ piece })
+			return left({ piece });
 		}
 
 		const date = match[1].trim().replace(/\//g, ".");
@@ -71,7 +71,7 @@ export class TBCV2024 implements Importer {
 			currency: this._currency,
 		};
 
-		return right({ operation })
+		return right({ operation });
 	}
 	private _determineCurrency(input: string): string {
 		const currencyRegex =

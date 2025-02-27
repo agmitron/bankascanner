@@ -102,7 +102,7 @@ export class KapitalBankV2024 implements Importer {
 
 	private _parsePiece(piece: string): Attempt {
 		if (!this._profile) {
-			return left({ piece, reason: "profile is not set" })
+			return left({ piece, reason: "profile is not set" });
 		}
 
 		const date = this._getDate(piece);
@@ -117,7 +117,7 @@ export class KapitalBankV2024 implements Importer {
 			comment,
 			category,
 			currency,
-		}
+		};
 
 		return right({ operation });
 	}

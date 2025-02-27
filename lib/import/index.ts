@@ -3,7 +3,11 @@ import * as tinkoff from "~/import/tinkoff";
 import * as jusan from "~/import/jusan";
 import * as tbc from "~/import/tbc";
 import type { Operation } from "~/row";
-import { DEFAULT_VERSION, UnknownVersionError, type Versioner } from "~/version";
+import {
+	DEFAULT_VERSION,
+	UnknownVersionError,
+	type Versioner,
+} from "~/version";
 import { UnknownBankError } from "~/bank";
 import type { Either } from "~/either";
 
@@ -15,13 +19,13 @@ export const versioners: Record<string, Versioner<string>> = {
 } as const;
 
 export interface Failure {
-	/** The string that is considered as a row in the given bank statement, 
+	/** The string that is considered as a row in the given bank statement,
 	 * but failed to be parsed.
 	 */
 	piece: string;
 
-	/** The specific field that left unparsed. 
-	*/
+	/** The specific field that left unparsed.
+	 */
 	field?: keyof Operation;
 
 	/** The reason why the parsing failed. */
@@ -35,7 +39,7 @@ export interface Success {
 // TODO: better naming?
 export type Attempt = Either<Failure, Success>;
 
-export type Result = Attempt[]
+export type Result = Attempt[];
 
 export interface Importer {
 	import(file: Buffer): Promise<Result>;

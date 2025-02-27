@@ -271,7 +271,7 @@ GE00TB0000000000000000`,
 		const rows = await instance.import(pdf);
 		const actual10firstRows = rows
 			.slice(0, 10)
-			.map(r => r.isRight() && r.value.operation);
+			.map((r) => r.isRight() && r.value.operation);
 
 		expect(actual10firstRows).toEqual(expected10firstRows);
 	});

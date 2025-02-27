@@ -539,12 +539,12 @@ UID получателя 61808226. Номер ДБО KA-91e74d5d-0934-42c6-a180-
 		const first10rows = actual.slice(0, 10);
 		const last10rows = actual.slice(-10);
 
-		expect(first10rows.map((r) => r.isRight() && r.value.operation.value)).toMatchObject(
-			expectedFirst10rows.map((r) => r.value),
-		);
+		expect(
+			first10rows.map((r) => r.isRight() && r.value.operation.value),
+		).toMatchObject(expectedFirst10rows.map((r) => r.value));
 
-		expect(last10rows.map((r) => r.isRight() && r.value.operation.value)).toMatchObject(
-			expectedLast10rows.map((r) => r.value),
-		);
+		expect(
+			last10rows.map((r) => r.isRight() && r.value.operation.value),
+		).toMatchObject(expectedLast10rows.map((r) => r.value));
 	});
 });

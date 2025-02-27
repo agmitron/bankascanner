@@ -40,7 +40,7 @@ export class TinkoffV2024 implements Importer {
 		const match = piece.match(regex);
 
 		if (!match) {
-			return left({ piece })
+			return left({ piece });
 		}
 
 		const dateStr = match[2].trim();
@@ -52,7 +52,7 @@ export class TinkoffV2024 implements Importer {
 
 		const card = comment.match(/(?=(.*\s?)(\d{4}|—))/);
 		if (!card) {
-			return left({ piece, field: 'comment' })
+			return left({ piece, field: "comment" });
 		}
 
 		const commentWithoutCard = comment.replace(card[2], "").trim();

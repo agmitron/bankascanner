@@ -263,7 +263,9 @@ GEO, TBILISI`,
 		const result = await instance.import(pdf);
 		const actual10firstRows = result.slice(0, 10);
 
-		expect(actual10firstRows.every(r => r.isRight())).toBe(true);
-		expect(actual10firstRows.map(r => r.isRight() && r.value.operation)).toEqual(expected10firstRows);
+		expect(actual10firstRows.every((r) => r.isRight())).toBe(true);
+		expect(
+			actual10firstRows.map((r) => r.isRight() && r.value.operation),
+		).toEqual(expected10firstRows);
 	});
 });
