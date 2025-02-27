@@ -7,7 +7,7 @@ import path from "node:path";
 
 describe("TBC", () => {
 	const previousBalance = 2000;
-	const instance = new TBCV2024(previousBalance);
+	const instance = new TBCV2024();
 
 	test("_split", () => {
 		const given = `02/11/2024POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
