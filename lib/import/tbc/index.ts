@@ -5,20 +5,20 @@ import {
 } from "~/version";
 import { TBCV2024 } from "./tbc.2024";
 
-type TBCVersion = "2024"; // add more versions here if needed
+type TBCVersion = Version<"2024">; // add more versions as union here if needed
 
-const versions: Version<TBCVersion>[] = [DEFAULT_VERSION, "2024"];
+const versions: TBCVersion[] = [DEFAULT_VERSION, "2024"];
 
 export class Versioner implements IVersioner<TBCVersion> {
 	public get supported() {
 		return versions;
 	}
 
-	public async guess(_: Buffer): Promise<Version<TBCVersion>> {
+	public async guess(_: Buffer): Promise<TBCVersion> {
 		return DEFAULT_VERSION;
 	}
 
-	public choose(v: Version<TBCVersion>) {
+	public choose(v: TBCVersion) {
 		switch (v) {
 			case DEFAULT_VERSION:
 			case "2024":

@@ -1,11 +1,12 @@
 import pdf2data from "pdf-parse";
-import type { Importer } from "~/import";
-import type { Row } from "~/row";
+import type { Attempt, Importer, Result } from "~/import";
+import type { Operation } from "~/row";
 import {
 	type Category,
 	type CategoryDetectors,
 	detectCategory,
 } from "~/category";
+import { left, right } from "~/either";
 
 const categoryDetectors: CategoryDetectors = new Map([
 	["other", [(s) => true]],
@@ -32,11 +33,11 @@ interface Extractor {
 export class KapitalBankV2024 implements Importer {
 	private _profile: Profile | null = null;
 
-	public async import(file: Buffer): Promise<Row[]> {
+	public async import(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const prepared = this._prepare(data.text);
-		const rows = this._split(prepared);
-		return rows.map((r) => this._parseRow(r));
+		const pieces = this._split(prepared);
+		return pieces.map((p) => this._parsePiece(p));
 	}
 
 	private _prepare(data: string): string {
@@ -86,33 +87,39 @@ export class KapitalBankV2024 implements Importer {
 
 		const match = r.exec(data);
 
+		const name = match?.[1] ?? "";
+		const account = match?.[2] ?? "";
+		const currency = match?.[3] ?? "";
+
 		this._profile = {
-			name: match?.[1] ?? "",
-			account: match?.[2] ?? "",
-			currency: match?.[3] ?? "",
+			name,
+			account,
+			currency,
 		};
 
 		return data.replaceAll(r, "");
 	}
 
-	private _parseRow(line: string): Row {
+	private _parsePiece(piece: string): Attempt {
 		if (!this._profile) {
-			throw new Error("Profile is not set");
+			return left({ piece, reason: "profile is not set" })
 		}
 
-		const date = this._getDate(line);
-		const value = this._getValue(line);
-		const comment = this._getComment(line);
-		const category = this._getCategory(line);
+		const date = this._getDate(piece);
+		const value = this._getValue(piece);
+		const comment = this._getComment(piece);
+		const category = this._getCategory(piece);
 		const currency = this._profile.currency;
 
-		return {
+		const operation = {
 			date,
 			value,
 			comment,
 			category,
 			currency,
-		};
+		}
+
+		return right({ operation });
 	}
 
 	private _getComment(piece: string): string {

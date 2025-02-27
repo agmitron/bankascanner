@@ -1,6 +1,6 @@
 import type { Category } from "./category";
 
-export interface Row {
+export interface Operation {
 	date: Date;
 	value: number;
 	category: Category;

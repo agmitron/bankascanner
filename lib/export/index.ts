@@ -1,9 +1,9 @@
-import type { Row } from "~/row";
+import type { Operation } from "~/row";
 import { JSONExporter } from "./json";
 import { UnsupportedFormatError } from "./error";
 
 export interface Exporter {
-	export(data: Row[]): Promise<Buffer>;
+	export(data: Operation[]): Promise<Buffer>;
 }
 
 const exporters: Record<string, Exporter> = {
@@ -13,7 +13,7 @@ const exporters: Record<string, Exporter> = {
 };
 
 export const run = (
-	rows: Row[],
+	rows: Operation[],
 	out: string,
 	format = out.split(".").pop(),
 ): Promise<Buffer> => {

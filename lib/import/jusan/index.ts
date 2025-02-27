@@ -5,20 +5,20 @@ import {
 } from "~/version";
 import { JusanV2024 } from "./jusan.2024";
 
-type JusanVersion = "2024"; // add more versions here if needed
+type JusanVersion = Version<"2024">; // add more versions here if needed
 
-const versions: Version<JusanVersion>[] = [DEFAULT_VERSION, "2024"];
+const versions: JusanVersion[] = [DEFAULT_VERSION, "2024"];
 
 export class Versioner implements IVersioner<JusanVersion> {
 	public get supported() {
 		return versions;
 	}
 
-	public async guess(_: Buffer): Promise<Version<JusanVersion>> {
+	public async guess(_: Buffer): Promise<JusanVersion> {
 		return DEFAULT_VERSION;
 	}
 
-	public choose(v: Version<JusanVersion>) {
+	public choose(v: JusanVersion) {
 		switch (v) {
 			case DEFAULT_VERSION:
 			case "2024":

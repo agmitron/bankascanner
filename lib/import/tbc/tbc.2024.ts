@@ -1,17 +1,18 @@
 import pdf2data from "pdf-parse";
-import type { Importer } from "~/import";
-import type { Row } from "~/row";
+import type { Failure, Importer, Result, Attempt } from "~/import";
+import type { Operation } from "~/row";
 import { ddmmyyyy } from "~/date";
+import { left, right } from "~/either";
 
 export class TBCV2024 implements Importer {
 	private previousBalance = 0;
 	private _currency: string;
 
-	constructor(previousBalance: number) {
-		// this.previousBalance = previousBalance;
+	constructor() {
 		this._currency = "";
 	}
-	public async import(file: Buffer): Promise<Row[]> {
+
+	public async import(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
 
@@ -19,7 +20,7 @@ export class TBCV2024 implements Importer {
 
 		return pieces
 			.filter((r) => this._isValidTransaction(r))
-			.map((r) => this._extractInfo(r));
+			.map((r) => this._parsePiece(r));
 	}
 
 	private _isValidTransaction(input: string): boolean {
@@ -38,14 +39,14 @@ export class TBCV2024 implements Importer {
 		return [];
 	}
 
-	private _extractInfo(input: string): Row {
+	private _parsePiece(piece: string): Attempt {
 		const regex =
 			/(\d{2}\/\d{2}\/\d{4})(([\s\S]*?))(?=\d+\.\d{5})(\d+\.\d{2})(\d+\.\d{2})/;
 
-		const match = input.match(regex);
+		const match = piece.match(regex);
 
 		if (!match) {
-			throw new Error("Input does not match the expected format");
+			return left({ piece })
 		}
 
 		const date = match[1].trim().replace(/\//g, ".");
@@ -62,7 +63,7 @@ export class TBCV2024 implements Importer {
 
 		this.previousBalance = currentBalanceNum;
 
-		const row: Row = {
+		const operation: Operation = {
 			date: ddmmyyyy(date),
 			value: Number(value.toFixed(2)),
 			category: "other",
@@ -70,7 +71,7 @@ export class TBCV2024 implements Importer {
 			currency: this._currency,
 		};
 
-		return row;
+		return right({ operation })
 	}
 	private _determineCurrency(input: string): string {
 		const currencyRegex =
