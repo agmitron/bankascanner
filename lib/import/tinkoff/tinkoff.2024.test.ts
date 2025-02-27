@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { Row } from "~/row";
+import type { Operation } from "~/row";
 import { ddmmyyyy } from "~/date";
 import { TinkoffV2024 } from "./tinkoff.2024";
 import { readFile } from "node:fs/promises";
@@ -92,7 +92,7 @@ describe("Tinkoff", () => {
   быстрых платежей
   1734`;
 
-		const expected: Row = {
+		const expected: Operation = {
 			date: ddmmyyyy("23.11.2024", "19:06:00"),
 			value: +3000.0,
 			category: "other",
@@ -100,13 +100,13 @@ describe("Tinkoff", () => {
 			currency: "RUB",
 		};
 
-		const actual = instance["_extractInfo"](given);
+		const actual = instance["_parsePiece"](given);
 
-		expect(actual).toMatchObject(expected);
+		expect(actual.isRight() && actual.value.operation).toMatchObject(expected);
 	});
 
 	test("import", async () => {
-		const expected10firstRows: Row[] = [
+		const expected10firstRows: Operation[] = [
 			{
 				value: +3000,
 				currency: "RUB",
@@ -182,8 +182,11 @@ describe("Tinkoff", () => {
 		const pdf = await readFile(
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
+
 		const rows = await instance.import(pdf);
-		const actual10firstRows = rows.slice(0, 10);
+		const actual10firstRows = rows
+			.slice(0, 10)
+			.map((r) => r.isRight() && r.value.operation);
 
 		expect(actual10firstRows).toEqual(expected10firstRows);
 	});

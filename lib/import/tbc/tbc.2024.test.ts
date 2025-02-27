@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { Row } from "~/row";
+import type { Operation } from "~/row";
 import { ddmmyyyy } from "~/date";
 import { TBCV2024 } from "./tbc.2024";
 import { readFile } from "node:fs/promises";
@@ -7,7 +7,7 @@ import path from "node:path";
 
 describe("TBC", () => {
 	const previousBalance = 2000;
-	const instance = new TBCV2024(previousBalance);
+	const instance = new TBCV2024();
 
 	test("_split", () => {
 		const given = `02/11/2024POS - Vip Pay*YANDEX.GO, 7.70 GEL, Nov 1 2024 8:41PM,
@@ -147,7 +147,7 @@ TBCBank_ის MC ბარათებით TBC Bank_ის ECOM/POS
 GE00TB0000000000000000
 7.70197.59`;
 		const previousBalance = 200;
-		const expected: Row = {
+		const expected: Operation = {
 			date: ddmmyyyy("02.11.2024"),
 			value: 7.7,
 			category: "other",
@@ -159,13 +159,13 @@ GE00TB0000000000000000`,
 			currency: "GEL",
 		};
 
-		const actual = instance["_extractInfo"](given);
+		const actual = instance["_parsePiece"](given);
 
-		expect(actual).toMatchObject(expected);
+		expect(actual.isRight() && actual.value.operation).toMatchObject(expected);
 	});
 	test("import", async () => {
-		const instance = new TBCV2024(previousBalance);
-		const expected10firstRows: Row[] = [
+		const instance = new TBCV2024();
+		const expected10firstRows: Operation[] = [
 			{
 				date: ddmmyyyy("2024-10-03"),
 				value: 11.5,
@@ -269,7 +269,9 @@ GE00TB0000000000000000`,
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
 		const rows = await instance.import(pdf);
-		const actual10firstRows = rows.slice(0, 10);
+		const actual10firstRows = rows
+			.slice(0, 10)
+			.map((r) => r.isRight() && r.value.operation);
 
 		expect(actual10firstRows).toEqual(expected10firstRows);
 	});

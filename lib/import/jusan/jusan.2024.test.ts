@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { Row } from "~/row";
+import type { Operation } from "~/row";
 import { ddmmyyyy } from "~/date";
 import { JusanV2024 } from "./jusan.2024";
 import { readFile } from "node:fs/promises";
@@ -134,7 +134,7 @@ GEO, BATUMI10.20GEL0.003.77`,
 Код авторизации: 568318
 GEO, Batumi25.00GEL0.009.27`;
 
-		const expected: Row = {
+		const expected: Operation = {
 			date: ddmmyyyy("29.10.2024", "10:59:46"),
 			value: -25.0,
 			category: "other",
@@ -145,12 +145,12 @@ GEO, Batumi`,
 			currency: "GEL",
 		};
 
-		const actual = instance["_extractInfo"](given);
+		const actual = instance["_parsePiece"](given);
 
-		expect(actual).toMatchObject(expected);
+		expect(actual.isRight() && actual.value.operation).toMatchObject(expected);
 	});
 	test("import", async () => {
-		const expected10firstRows: Row[] = [
+		const expected10firstRows: Operation[] = [
 			{
 				date: ddmmyyyy("2024-11-04", "11:22:56"),
 				value: -113.98,
@@ -260,9 +260,12 @@ GEO, TBILISI`,
 		const pdf = await readFile(
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
-		const rows = await instance.import(pdf);
-		const actual10firstRows = rows.slice(0, 10);
+		const result = await instance.import(pdf);
+		const actual10firstRows = result.slice(0, 10);
 
-		expect(actual10firstRows).toEqual(expected10firstRows);
+		expect(actual10firstRows.every((r) => r.isRight())).toBe(true);
+		expect(
+			actual10firstRows.map((r) => r.isRight() && r.value.operation),
+		).toEqual(expected10firstRows);
 	});
 });

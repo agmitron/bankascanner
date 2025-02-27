@@ -2,9 +2,14 @@ import * as kapitalbank from "~/import/kapitalbank";
 import * as tinkoff from "~/import/tinkoff";
 import * as jusan from "~/import/jusan";
 import * as tbc from "~/import/tbc";
-import { UnknownBankError, UnknownVersionError } from "~/error";
-import type { Row } from "~/row";
-import { DEFAULT_VERSION, type Versioner } from "~/version";
+import type { Operation } from "~/row";
+import {
+	DEFAULT_VERSION,
+	UnknownVersionError,
+	type Versioner,
+} from "~/version";
+import { UnknownBankError } from "~/bank";
+import type { Either } from "~/either";
 
 export const versioners: Record<string, Versioner<string>> = {
 	kapitalbank: new kapitalbank.Versioner(),
@@ -13,8 +18,31 @@ export const versioners: Record<string, Versioner<string>> = {
 	tbc: new tbc.Versioner(),
 } as const;
 
+export interface Failure {
+	/** The string that is considered as a row in the given bank statement,
+	 * but failed to be parsed.
+	 */
+	piece: string;
+
+	/** The specific field that left unparsed.
+	 */
+	field?: keyof Operation;
+
+	/** The reason why the parsing failed. */
+	reason?: string;
+}
+
+export interface Success {
+	operation: Operation;
+}
+
+// TODO: better naming?
+export type Attempt = Either<Failure, Success>;
+
+export type Result = Attempt[];
+
 export interface Importer {
-	import(file: Buffer): Promise<Row[]>;
+	import(file: Buffer): Promise<Result>;
 }
 
 export const run = (bank: string, version: string, pdf: Buffer) => {

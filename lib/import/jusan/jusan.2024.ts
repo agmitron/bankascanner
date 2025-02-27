@@ -1,25 +1,20 @@
 import pdf2data from "pdf-parse";
 import { otherCurrency } from "~/currency";
-import type { Importer } from "~/import";
-import type { Row } from "~/row";
+import type { Importer, Attempt, Result } from "~/import";
+import type { Operation } from "~/row";
 import { ddmmyyyy } from "~/date";
+import { left, right } from "~/either";
 
 // date for correct data match
 const FAKE_DATE = `10.10.1010
 08:32`;
 
 export class JusanV2024 implements Importer {
-	public async import(file: Buffer): Promise<Row[]> {
+	public async import(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
 
-		const result = pieces
-			.map((r) => {
-				const parsedPiece = this._extractInfo(r);
-				return parsedPiece;
-			})
-			.filter((piece): piece is Row => piece !== null);
-
+		const result = pieces.map((r) => this._parsePiece(r));
 		return result;
 	}
 
@@ -54,16 +49,15 @@ export class JusanV2024 implements Importer {
 		return sortedMatches;
 	}
 
-	private _extractInfo(input: string): Row | null {
+	private _parsePiece(piece: string): Attempt {
 		try {
 			const regex =
 				/(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})\s+([\s\S]+?)\s+Референс:\s+(\d+)\s+Код авторизации:\s+(\d+)\s+([\s\S]*?)(\d+(\.\d{2})?)([A-Z]{3})/;
 
-			const match = input.match(regex);
+			const match = piece.match(regex);
 
 			if (!match) {
-				// throw new Error("No match found");
-				return this._extractInfo2(input);
+				return this._parsePiece2(piece);
 			}
 
 			const date = match[1];
@@ -89,7 +83,7 @@ export class JusanV2024 implements Importer {
 
 			const formattedComment = commentParts.join("\n").trim();
 
-			const row: Row = {
+			const row: Operation = {
 				date: ddmmyyyy(date, time),
 				value,
 				category: "other",
@@ -97,25 +91,23 @@ export class JusanV2024 implements Importer {
 				currency,
 			};
 
-			return row;
+			return right({ operation: row });
 		} catch (error) {
-			console.error("Error extracting info:", error);
-			return null;
+			return left({ piece });
 		}
 	}
-	private _extractInfo2(data: string): Row | null {
+	private _parsePiece2(piece: string): Attempt {
 		const regex =
 			/(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})\s+([\s\S]*)^(\d+\.\d{2})(\w{3})/m;
 
-		const match = data.match(regex);
+		const match = piece.match(regex);
 		if (!match) {
-			console.warn("No match found for data:", data);
-			return null;
+			return left({ piece });
 		}
 
 		const [_, date, time, text, value, currency] = match;
 
-		const extractedRow: Row = {
+		const operation: Operation = {
 			date: ddmmyyyy(date, time),
 			comment: text.trim(),
 			value: -Number.parseFloat(value),
@@ -123,6 +115,6 @@ export class JusanV2024 implements Importer {
 			currency,
 		};
 
-		return extractedRow;
+		return right({ operation });
 	}
 }

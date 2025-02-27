@@ -3,7 +3,7 @@ import path from "node:path";
 import * as fs from "node:fs/promises";
 import { test, describe, expect } from "vitest";
 import { KapitalBankV2024 } from "./kapitalbank.2024";
-import type { Row } from "~/row";
+import type { Operation } from "~/row";
 import { ddmmyyyy } from "~/date";
 import type { Category } from "~/category";
 
@@ -383,7 +383,7 @@ e68e7f5f21c7`,
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
 
-		const expectedFirst10rows: Row[] = [
+		const expectedFirst10rows: Operation[] = [
 			{
 				comment: `Списание по опер в TOO "TAMERLAN BI" SLIP No 33207`,
 				value: -11.54,
@@ -443,7 +443,8 @@ e68e7f5f21c7`,
 			},
 			{
 				comment: `Перевод со счета на Visa в валюте. UID
-отправителя 8a26ede9-3b7b-46a3-b3dc- 770b7055b90b. UID получателя 61808226. Номер ДБО KA-91e74d5d-0934-42c6-a180-9b8fb4c2114f.`,
+отправителя 8a26ede9-3b7b-46a3-b3dc- 770b7055b90b. 
+UID получателя 61808226. Номер ДБО KA-91e74d5d-0934-42c6-a180-9b8fb4c2114f.`,
 				value: 100.0,
 				date: ddmmyyyy("14.07.2024"),
 				category: "other",
@@ -451,7 +452,8 @@ e68e7f5f21c7`,
 			},
 			{
 				comment: `Перевод со счета на Visa в валюте. UID
-отправителя 8a26ede9-3b7b-46a3-b3dc- 770b7055b90b. UID получателя 61808226. Номер ДБО KA-91e74d5d-0934-42c6-a180-9b8fb4c2114f.`,
+отправителя 8a26ede9-3b7b-46a3-b3dc- 770b7055b90b. 
+UID получателя 61808226. Номер ДБО KA-91e74d5d-0934-42c6-a180-9b8fb4c2114f.`,
 				value: 300,
 				date: ddmmyyyy("14.07.2024"),
 				category: "other",
@@ -459,7 +461,7 @@ e68e7f5f21c7`,
 			},
 		];
 
-		const expectedLast10rows: Row[] = [
+		const expectedLast10rows: Operation[] = [
 			{
 				comment: `Списание по опер в NIKORA 293 SLIP No 30900`,
 				date: ddmmyyyy("06.09.2024"),
@@ -537,12 +539,12 @@ e68e7f5f21c7`,
 		const first10rows = actual.slice(0, 10);
 		const last10rows = actual.slice(-10);
 
-		expect(first10rows.map((r) => r.value)).toMatchObject(
-			expectedFirst10rows.map((r) => r.value),
-		);
+		expect(
+			first10rows.map((r) => r.isRight() && r.value.operation.value),
+		).toMatchObject(expectedFirst10rows.map((r) => r.value));
 
-		expect(last10rows.map((r) => r.value)).toMatchObject(
-			expectedLast10rows.map((r) => r.value),
-		);
+		expect(
+			last10rows.map((r) => r.isRight() && r.value.operation.value),
+		).toMatchObject(expectedLast10rows.map((r) => r.value));
 	});
 });

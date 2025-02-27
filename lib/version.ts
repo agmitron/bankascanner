@@ -1,20 +1,8 @@
-import type { Category } from "./category";
+import type { Importer } from "./import";
 
 export const DEFAULT_VERSION = "latest";
 
 export type Version<V extends string> = typeof DEFAULT_VERSION | V;
-
-export interface Row {
-	date: Date;
-	value: number;
-	category: Category;
-	comment: string;
-	currency: string;
-}
-
-export interface Importer {
-	import(file: Buffer): Promise<Row[]>;
-}
 
 /**
  * Versioner is responsible for guessing the version of the
@@ -36,4 +24,10 @@ export interface Versioner<V extends string> {
 	 * Returns the list of supported versions.
 	 */
 	get supported(): Version<V>[];
+}
+
+export class UnknownVersionError extends Error {
+	constructor(version: string, bank: string) {
+		super(`Unknown version ${version} for bank ${bank}`);
+	}
 }
