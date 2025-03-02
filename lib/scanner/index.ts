@@ -39,7 +39,7 @@ export interface Success {
 // TODO: better naming?
 export type Attempt = Either<Failure, Success>;
 
-export type Result = Attempt[];
+export type Result = Iterable<Attempt>;
 
 export interface Scanner {
 	scan(file: Buffer): Promise<Result>;

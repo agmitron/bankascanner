@@ -6,7 +6,9 @@
 		"url": "git+https://github.com/agmitron/bankascanner.git"
 	},
 	"description": "Parse your PDF bank statements into structured format.",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"scripts": {
 		"clean": "rimraf dist",
 		"build": "npm run clean && tsc -p tsconfig.build.json",
@@ -32,6 +34,7 @@
 	},
 	"dependencies": {
 		"@types/pdf-parse": "1.1.4",
+		"buffer": "^6.0.3",
 		"fs": "^0.0.1-security",
 		"patch-package": "^8.0.0",
 		"pdf-parse": "1.1.1",
