@@ -1,6 +1,6 @@
 import pdf2data from "pdf-parse";
 import type { Attempt, Importer, Result } from "~/import";
-import type { Operation } from "~/row";
+import type { Operation } from "~/operation";
 import {
 	type Category,
 	type CategoryDetectors,

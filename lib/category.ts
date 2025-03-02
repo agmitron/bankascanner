@@ -1,3 +1,5 @@
+// TODO: refactor
+
 export type CategoryPredicate = (s: string) => boolean;
 export type CategoryDetectors = Map<Category, CategoryPredicate[]>;
 

@@ -1,6 +1,6 @@
 import pdf2data from "pdf-parse";
 import type { Failure, Importer, Result, Attempt } from "~/import";
-import type { Operation } from "~/row";
+import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { left, right } from "~/either";
 

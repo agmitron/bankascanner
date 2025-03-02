@@ -1,7 +1,7 @@
 import pdf2data from "pdf-parse";
 import { otherCurrency } from "~/currency";
 import type { Attempt, Importer, Result } from "~/import";
-import type { Operation } from "~/row";
+import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { left, right } from "~/either";
 

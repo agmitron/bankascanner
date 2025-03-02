@@ -1,5 +1,5 @@
 import type { Exporter } from "~/export";
-import type { Operation } from "~/row";
+import type { Operation } from "~/operation";
 
 export class JSONExporter implements Exporter {
 	export(data: Operation[]): Promise<Buffer> {

@@ -1,4 +1,4 @@
-import type { Operation } from "~/row";
+import type { Operation } from "~/operation";
 import { JSONExporter } from "./json";
 import { UnsupportedFormatError } from "./error";
 

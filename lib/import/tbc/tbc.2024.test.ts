@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { Operation } from "~/row";
+import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { TBCV2024 } from "./tbc.2024";
 import { readFile } from "node:fs/promises";

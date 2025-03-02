@@ -2,7 +2,7 @@ import * as kapitalbank from "~/import/kapitalbank";
 import * as tinkoff from "~/import/tinkoff";
 import * as jusan from "~/import/jusan";
 import * as tbc from "~/import/tbc";
-import type { Operation } from "~/row";
+import type { Operation } from "~/operation";
 import {
 	DEFAULT_VERSION,
 	UnknownVersionError,
