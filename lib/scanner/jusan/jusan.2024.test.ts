@@ -4,6 +4,9 @@ import { ddmmyyyy } from "~/date";
 import { JusanV2024 } from "./jusan.2024";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { createReadStream } from "node:fs";
+import { Readable } from "node:stream";
+import { PDFImporter } from "~/importer/pdf";
 
 describe("Jusan", () => {
 	const instance = new JusanV2024();
@@ -257,11 +260,16 @@ GEO, TBILISI`,
 			},
 		];
 
-		const pdf = await readFile(
+
+		const stream = createReadStream(
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
-		const result = await instance.scan(pdf);
-		const actual10firstRows = result.slice(0, 10);
+
+		const statement = await new PDFImporter().import(Readable.toWeb(stream));
+
+		const scan = await instance.scan(statement);
+
+		const actual10firstRows = Array.from(scan).slice(0, 10);
 
 		expect(actual10firstRows.every((r) => r.isRight())).toBe(true);
 		expect(

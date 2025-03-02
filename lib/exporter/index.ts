@@ -1,22 +1,24 @@
-import type { Operation } from "~/operation";
 import { JSONExporter } from "./json";
 import { UnsupportedFormatError } from "./error";
+import type { Scan } from "~/scanner";
 
 export interface Exporter {
-	export(data: Operation[]): Promise<Buffer>;
+	readonly canFail: boolean;
+
+	export(s: Scan): ReadableStream<Uint8Array>;
 }
 
 const exporters: Record<string, Exporter> = {
-	json: new JSONExporter(),
+	json: new JSONExporter(false),
 
 	// TODO: csv
 };
 
 export const run = (
-	rows: Operation[],
+	scan: Scan,
 	out: string,
 	format = out.split(".").pop(),
-): Promise<Buffer> => {
+): ReadableStream<Uint8Array> => {
 	if (!format) {
 		throw new Error(`Invalid out format ${out}`);
 	}
@@ -26,5 +28,5 @@ export const run = (
 		throw new UnsupportedFormatError(format, Object.keys(exporters));
 	}
 
-	return exporters[format].export(rows);
+	return exporters[format].export(scan);
 };

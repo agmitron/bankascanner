@@ -6,6 +6,9 @@ import { KapitalBankV2024 } from "./kapitalbank.2024";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import type { Category } from "~/category";
+import { createReadStream } from "node:fs";
+import { Readable } from "node:stream";
+import { PDFImporter } from "~/importer/pdf";
 
 describe("Kapitalbank", () => {
 	const instance = new KapitalBankV2024();
@@ -534,10 +537,16 @@ UID получателя 61808226. Номер ДБО KA-91e74d5d-0934-42c6-a180-
 			},
 		];
 
-		const actual = await instance.scan(data);
+		const stream = createReadStream(
+			path.resolve(__dirname, "./__fixtures__/test.pdf"),
+		);
 
-		const first10rows = actual.slice(0, 10);
-		const last10rows = actual.slice(-10);
+		const statement = await new PDFImporter().import(Readable.toWeb(stream));
+
+		const actual = await instance.scan(statement);
+
+		const first10rows = Array.from(actual).slice(0, 10);
+		const last10rows = Array.from(actual).slice(-10);
 
 		expect(
 			first10rows.map((r) => r.isRight() && r.value.operation.value),

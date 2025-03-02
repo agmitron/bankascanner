@@ -14,11 +14,11 @@ export class Versioner implements IVersioner<KapitalbankVersion> {
 		return versions;
 	}
 
-	public async guess(_: Buffer): Promise<Version<KapitalbankVersion>> {
+	public async guess(_: Buffer): Promise<KapitalbankVersion> {
 		return DEFAULT_VERSION;
 	}
 
-	public choose(v: Version<KapitalbankVersion>) {
+	public choose(v: KapitalbankVersion) {
 		switch (v) {
 			case DEFAULT_VERSION:
 			case "2024":

@@ -4,9 +4,11 @@ import { ddmmyyyy } from "~/date";
 import { TBCV2024 } from "./tbc.2024";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { createReadStream } from "node:fs";
+import { PDFImporter } from "~/importer/pdf";
+import { Readable } from "node:stream";
 
 describe("TBC", () => {
-	const previousBalance = 2000;
 	const instance = new TBCV2024();
 
 	test("_split", () => {
@@ -265,11 +267,14 @@ GE00TB0000000000000000`,
 			},
 		];
 
-		const pdf = await readFile(
+		const stream = createReadStream(
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
-		const rows = await instance.scan(pdf);
-		const actual10firstRows = rows
+
+		const statement = await new PDFImporter().import(Readable.toWeb(stream));
+
+		const scan = await instance.scan(statement);
+		const actual10firstRows = Array.from(scan)
 			.slice(0, 10)
 			.map((r) => r.isRight() && r.value.operation);
 

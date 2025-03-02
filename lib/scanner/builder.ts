@@ -16,31 +16,29 @@ interface Extractor {
 	operation: (piece: string) => Attempt;
 }
 
-export function build<V extends string>(
-	extractors: Record<Version<V>, Extractor>,
-): Versioner<V> {
-	return {};
-}
+// export function build<V extends string>(
+// 	extractors: Record<Version<V>, Extractor>,
+// ): Versioner<V> {
+// 	return {};
+// }
 
-type SomeParserVersion = Version<"2024" | "2025">;
+// type SomeParserVersion = Version;
 
-build<SomeParserVersion>({
-	latest: {
-		pieces(raw) {
-			return raw.split("\n");
-		},
-		operation(piece) {
-			return right({
-				operation: {
-					date: new Date(),
-					category: "other",
-					currency: "USD",
-					comment: "Some description",
-					value: 0,
-				},
-			});
-		},
-	},
-	"2024": {},
-	"2025": {},
-});
+// build<SomeParserVersion>({
+// 	latest: {
+// 		pieces(raw) {
+// 			return raw.split("\n");
+// 		},
+// 		operation(piece) {
+// 			return right({
+// 				operation: {
+// 					date: new Date(),
+// 					category: "other",
+// 					currency: "USD",
+// 					comment: "Some description",
+// 					value: 0,
+// 				},
+// 			});
+// 		},
+// 	},
+// });

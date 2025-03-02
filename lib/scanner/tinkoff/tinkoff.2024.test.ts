@@ -4,6 +4,9 @@ import { ddmmyyyy } from "~/date";
 import { TinkoffV2024 } from "./tinkoff.2024";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { createReadStream } from "node:fs";
+import { PDFImporter } from "~/importer/pdf";
+import { Readable } from "node:stream";
 
 describe("Tinkoff", () => {
 	const instance = new TinkoffV2024();
@@ -179,12 +182,15 @@ describe("Tinkoff", () => {
 			},
 		];
 
-		const pdf = await readFile(
+		const stream = createReadStream(
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
 
-		const rows = await instance.scan(pdf);
-		const actual10firstRows = rows
+		const statement = await new PDFImporter().import(Readable.toWeb(stream));
+
+		const scan = await instance.scan(statement);
+
+		const actual10firstRows = Array.from(scan)
 			.slice(0, 10)
 			.map((r) => r.isRight() && r.value.operation);
 

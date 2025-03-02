@@ -1,8 +1,8 @@
-import pdf2data from "pdf-parse";
-import type { Failure, Scanner, Result, Attempt } from "~/scanner";
+import type { Scanner, Scan, Attempt } from "~/scanner";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { left, right } from "~/either";
+import type { Statement } from "~/statement";
 
 export class TBCV2024 implements Scanner {
 	private previousBalance = 0;
@@ -12,11 +12,10 @@ export class TBCV2024 implements Scanner {
 		this._currency = "";
 	}
 
-	public async scan(file: Buffer): Promise<Result> {
-		const data = await pdf2data(file);
-		const pieces = this._split(data.text);
+	public async scan(s: Statement): Promise<Scan> {
+		const pieces = this._split(s.content);
 
-		this._determineCurrency(data.text);
+		this._determineCurrency(s.content);
 
 		return pieces
 			.filter((r) => this._isValidTransaction(r))

@@ -10,6 +10,7 @@ import {
 } from "~/scanner/version";
 import { UnknownBankError } from "~/bank";
 import type { Either } from "~/either";
+import type { Statement } from "~/statement";
 
 export const scanners: Record<string, Versioner<string>> = {
 	kapitalbank: new kapitalbank.Versioner(),
@@ -36,22 +37,33 @@ export interface Success {
 	operation: Operation;
 }
 
-// TODO: better naming?
 export type Attempt = Either<Failure, Success>;
 
-export type Result = Iterable<Attempt>;
+/** 
+ * Represents a collection of attempts. 
+ * 
+ * Some operations might be parsed successfully, but some might not. 
+ * 
+ * Using a collection is convenient to handle both cases and keep the order of operations.
+ */
+export type Scan = Iterable<Attempt>;
 
 export interface Scanner {
-	scan(file: Buffer): Promise<Result>;
+	/**
+ * Scans the provided statement and returns the result.
+ * @param statement The statement to scan.
+ * @returns The scanned data.
+ */
+	scan(statement: Statement): Promise<Scan>;
 }
 
-export const run = (bank: string, version: string, pdf: Buffer) => {
+export const run = (bank: string, version: string, statement: Statement) => {
 	const scanner = get(bank, version);
 	if (!scanner) {
 		throw new UnknownVersionError(version, bank);
 	}
 
-	return scanner.scan(pdf);
+	return scanner.scan(statement);
 };
 
 export const choices = () => Object.keys(scanners);

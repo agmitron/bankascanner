@@ -2,7 +2,7 @@ import type { Scanner } from ".";
 
 export const DEFAULT_VERSION = "latest";
 
-export type Version<V extends string> = typeof DEFAULT_VERSION | V;
+export type Version<V extends string = typeof DEFAULT_VERSION> = typeof DEFAULT_VERSION | V;
 
 /**
  * Versioner is responsible for guessing the version of the

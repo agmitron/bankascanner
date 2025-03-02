@@ -1,18 +1,18 @@
 import pdf2data from "pdf-parse";
 import { otherCurrency } from "~/currency";
-import type { Attempt, Scanner, Result } from "~/scanner";
+import type { Attempt, Scanner, Scan } from "~/scanner";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { left, right } from "~/either";
+import type { Statement } from "~/statement";
 
 // date for correct data match
 const FAKE_DATE = `10.10.1010
 08:32`;
 
 export class TinkoffV2024 implements Scanner {
-	public async scan(file: Buffer): Promise<Result> {
-		const data = await pdf2data(file);
-		const pieces = this._split(data.text);
+	public async scan(s: Statement): Promise<Scan> {
+		const pieces = this._split(s.content);
 		return pieces.map((r) => this._parsePiece(r));
 	}
 
