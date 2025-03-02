@@ -2,7 +2,7 @@ import {
 	DEFAULT_VERSION,
 	type Version,
 	type Versioner as IVersioner,
-} from "~/version";
+} from "~/scanner/version";
 import { TBCV2024 } from "./tbc.2024";
 
 type TBCVersion = Version<"2024">; // add more versions as union here if needed

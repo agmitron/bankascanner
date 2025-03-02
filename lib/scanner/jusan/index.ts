@@ -2,7 +2,7 @@ import {
 	DEFAULT_VERSION,
 	type Versioner as IVersioner,
 	type Version,
-} from "~/version";
+} from "~/scanner/version";
 import { JusanV2024 } from "./jusan.2024";
 
 type JusanVersion = Version<"2024">; // add more versions here if needed

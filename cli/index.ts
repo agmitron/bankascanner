@@ -2,10 +2,10 @@ import fs from "node:fs/promises";
 import yargs from "yargs";
 import path from "node:path";
 import { hideBin } from "yargs/helpers";
-import * as importer from "~/import";
+import * as importer from "~/scanner";
 import * as exporter from "~/export";
 
-import { DEFAULT_VERSION } from "~/version";
+import { DEFAULT_VERSION } from "~/scanner/version";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)

@@ -268,7 +268,7 @@ GE00TB0000000000000000`,
 		const pdf = await readFile(
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
-		const rows = await instance.import(pdf);
+		const rows = await instance.scan(pdf);
 		const actual10firstRows = rows
 			.slice(0, 10)
 			.map((r) => r.isRight() && r.value.operation);

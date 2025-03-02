@@ -260,7 +260,7 @@ GEO, TBILISI`,
 		const pdf = await readFile(
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
-		const result = await instance.import(pdf);
+		const result = await instance.scan(pdf);
 		const actual10firstRows = result.slice(0, 10);
 
 		expect(actual10firstRows.every((r) => r.isRight())).toBe(true);

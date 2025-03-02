@@ -183,7 +183,7 @@ describe("Tinkoff", () => {
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
 
-		const rows = await instance.import(pdf);
+		const rows = await instance.scan(pdf);
 		const actual10firstRows = rows
 			.slice(0, 10)
 			.map((r) => r.isRight() && r.value.operation);

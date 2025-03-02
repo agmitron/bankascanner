@@ -534,7 +534,7 @@ UID получателя 61808226. Номер ДБО KA-91e74d5d-0934-42c6-a180-
 			},
 		];
 
-		const actual = await instance.import(data);
+		const actual = await instance.scan(data);
 
 		const first10rows = actual.slice(0, 10);
 		const last10rows = actual.slice(-10);

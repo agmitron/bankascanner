@@ -1,10 +1,10 @@
 import pdf2data from "pdf-parse";
-import type { Failure, Importer, Result, Attempt } from "~/import";
+import type { Failure, Scanner, Result, Attempt } from "~/scanner";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { left, right } from "~/either";
 
-export class TBCV2024 implements Importer {
+export class TBCV2024 implements Scanner {
 	private previousBalance = 0;
 	private _currency: string;
 
@@ -12,7 +12,7 @@ export class TBCV2024 implements Importer {
 		this._currency = "";
 	}
 
-	public async import(file: Buffer): Promise<Result> {
+	public async scan(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
 

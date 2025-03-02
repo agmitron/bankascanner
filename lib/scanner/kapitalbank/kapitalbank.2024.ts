@@ -1,5 +1,5 @@
 import pdf2data from "pdf-parse";
-import type { Attempt, Importer, Result } from "~/import";
+import type { Attempt, Scanner, Result } from "~/scanner";
 import type { Operation } from "~/operation";
 import {
 	type Category,
@@ -30,10 +30,10 @@ interface Extractor {
 /**
  * Parses KapitalBank statements of the 2024 version.
  */
-export class KapitalBankV2024 implements Importer {
+export class KapitalBankV2024 implements Scanner {
 	private _profile: Profile | null = null;
 
-	public async import(file: Buffer): Promise<Result> {
+	public async scan(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const prepared = this._prepare(data.text);
 		const pieces = this._split(prepared);

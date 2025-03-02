@@ -1,6 +1,6 @@
 import pdf2data from "pdf-parse";
 import { otherCurrency } from "~/currency";
-import type { Attempt, Importer, Result } from "~/import";
+import type { Attempt, Scanner, Result } from "~/scanner";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { left, right } from "~/either";
@@ -9,8 +9,8 @@ import { left, right } from "~/either";
 const FAKE_DATE = `10.10.1010
 08:32`;
 
-export class TinkoffV2024 implements Importer {
-	public async import(file: Buffer): Promise<Result> {
+export class TinkoffV2024 implements Scanner {
+	public async scan(file: Buffer): Promise<Result> {
 		const data = await pdf2data(file);
 		const pieces = this._split(data.text);
 		return pieces.map((r) => this._parsePiece(r));

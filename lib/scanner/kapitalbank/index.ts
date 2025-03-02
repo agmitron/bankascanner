@@ -2,12 +2,12 @@ import {
 	DEFAULT_VERSION,
 	type Versioner as IVersioner,
 	type Version,
-} from "~/version";
+} from "~/scanner/version";
 import { KapitalBankV2024 } from "./kapitalbank.2024";
 
-type KapitalbankVersion = "2024"; // add more versions here if needed
+type KapitalbankVersion = Version<"2024">; // add more versions here if needed
 
-const versions: Version<KapitalbankVersion>[] = [DEFAULT_VERSION, "2024"];
+const versions: KapitalbankVersion[] = [DEFAULT_VERSION, "2024"];
 
 export class Versioner implements IVersioner<KapitalbankVersion> {
 	public get supported() {
