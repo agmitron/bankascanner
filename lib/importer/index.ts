@@ -1,12 +1,10 @@
 import type { Statement } from "~/statement";
-import type { Subscriber } from "~/subscriber";
+import type { Reader } from "./reader";
 
-export interface Progress {
-	bytes: number;
-}
-
-export type Event = "progress";
-
-export interface Importer extends Subscriber<Event, Progress> {
-	import(file: ReadableStream<Uint8Array>): Promise<Statement>;
+/** Importer is an abstraction that reads a file and returns a Statement. 
+ * 
+ * Since statements might be stored in different formats, there might be different implementations of this interface.
+*/
+export interface Importer {
+	import(file: Reader): Promise<Statement>;
 }

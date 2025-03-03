@@ -1,4 +1,4 @@
-import type { Attempt, Scan, Scanner } from ".";
+import type { Attempt, Scan, Scanner } from "~/scanner";
 import {
 	DEFAULT_VERSION,
 	UnknownVersionError,
@@ -12,7 +12,7 @@ type Piece = string;
 
 /**
  * Extractor is a short description of how to split the full file to pieces
- * and how to extract an Operation from a piece.
+ * and how to extract an Operation from each piece.
  *
  * It's usually enough to parse a statement, so there are just two methods.
  */
