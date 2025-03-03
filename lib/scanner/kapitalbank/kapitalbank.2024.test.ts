@@ -9,7 +9,7 @@ import type { Category } from "~/category";
 import { createReadStream } from "node:fs";
 import { Readable } from "node:stream";
 import { PDFImporter } from "~/importer/pdf";
-import { FileReader } from "~/importer/reader";
+import { FileLoader } from "~/importer/loader";
 
 describe("Kapitalbank", () => {
 	const instance = new KapitalBankV2024();
@@ -542,7 +542,9 @@ UID получателя 61808226. Номер ДБО KA-91e74d5d-0934-42c6-a180-
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
 
-const statement = await new PDFImporter().import(new FileReader(Readable.toWeb(stream)));
+		const statement = await new PDFImporter().import(
+			new FileLoader(Readable.toWeb(stream)),
+		);
 
 		const actual = await instance.scan(statement);
 

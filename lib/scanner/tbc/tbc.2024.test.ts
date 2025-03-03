@@ -7,7 +7,7 @@ import path from "node:path";
 import { createReadStream } from "node:fs";
 import { PDFImporter } from "~/importer/pdf";
 import { Readable } from "node:stream";
-import { FileReader } from "~/importer/reader";
+import { FileLoader } from "~/importer/loader";
 
 describe("TBC", () => {
 	const instance = new TBCV2024();
@@ -272,7 +272,9 @@ GE00TB0000000000000000`,
 			path.resolve(__dirname, "./__fixtures__/test.pdf"),
 		);
 
-const statement = await new PDFImporter().import(new FileReader(Readable.toWeb(stream)));
+		const statement = await new PDFImporter().import(
+			new FileLoader(Readable.toWeb(stream)),
+		);
 
 		const scan = await instance.scan(statement);
 		const actual10firstRows = Array.from(scan)
