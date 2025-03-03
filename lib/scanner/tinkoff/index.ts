@@ -4,6 +4,7 @@ import {
 	type Versioner as IVersioner,
 } from "~/scanner/version";
 import { TinkoffV2024 } from "./tinkoff.2024";
+import type { Statement } from "~/statement";
 
 type TinkoffVersion = Version<"2024">; // add more versions here if needed
 
@@ -14,7 +15,7 @@ export class Versioner implements IVersioner<TinkoffVersion> {
 		return versions;
 	}
 
-	public async guess(_: Buffer): Promise<Version<TinkoffVersion>> {
+	public guess(s: Statement): TinkoffVersion {
 		return DEFAULT_VERSION;
 	}
 

@@ -1,6 +1,7 @@
 import { right } from "~/either";
-import type { Attempt } from ".";
-import type { Version, Versioner } from "./version";
+import type { Attempt, Scan, Scanner } from ".";
+import { DEFAULT_VERSION, UnknownVersionError, type Version, type Versioner } from "./version";
+import type { Statement } from "~/statement";
 
 /** Represents a part of the statement that should contain an Operation (like row of a table). */
 type Piece = string;
@@ -16,29 +17,32 @@ interface Extractor {
 	operation: (piece: string) => Attempt;
 }
 
-// export function build<V extends string>(
-// 	extractors: Record<Version<V>, Extractor>,
-// ): Versioner<V> {
-// 	return {};
-// }
+export function build<V extends Version<string>>(
+	name: string,
+	extractors: Record<Version<V>, Extractor>,
+	guessVersion: (s: Statement) => V = () => DEFAULT_VERSION as V,
+): Versioner<V> {
+	return new class implements Versioner<V> {
+		guess(s: Statement): V {
+			return guessVersion(s);
+		}
 
-// type SomeParserVersion = Version;
+		choose(v: V): Scanner {
+			const extractor = extractors[v];
+			if (!extractor) {
+				throw new UnknownVersionError(v, name);
+			}
+		
+			return new class implements Scanner {
+				scan(s: Statement): Scan {
+					const pieces = extractor.pieces(s.content);
+					return pieces.map(extractor.operation);
+				}
+			};
+		}
 
-// build<SomeParserVersion>({
-// 	latest: {
-// 		pieces(raw) {
-// 			return raw.split("\n");
-// 		},
-// 		operation(piece) {
-// 			return right({
-// 				operation: {
-// 					date: new Date(),
-// 					category: "other",
-// 					currency: "USD",
-// 					comment: "Some description",
-// 					value: 0,
-// 				},
-// 			});
-// 		},
-// 	},
-// });
+		get supported(): V[] {
+			return Object.keys(extractors) as V[];
+		}
+	}
+}

@@ -4,6 +4,7 @@ import {
 	type Versioner as IVersioner,
 } from "~/scanner/version";
 import { TBCV2024 } from "./tbc.2024";
+import type { Statement } from "~/statement";
 
 type TBCVersion = Version<"2024">; // add more versions as union here if needed
 
@@ -14,7 +15,7 @@ export class Versioner implements IVersioner<TBCVersion> {
 		return versions;
 	}
 
-	public async guess(_: Buffer): Promise<TBCVersion> {
+	public guess(_: Statement): TBCVersion {
 		return DEFAULT_VERSION;
 	}
 

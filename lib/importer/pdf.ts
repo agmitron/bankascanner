@@ -4,7 +4,10 @@ import type { Importer, Progress, Event } from "~/importer";
 import { Subscriber } from "~/subscriber";
 import type { Statement } from "~/statement";
 
-export class PDFImporter extends Subscriber<Event, Progress> implements Importer {
+export class PDFImporter
+	extends Subscriber<Event, Progress>
+	implements Importer
+{
 	async import(file: ReadableStream<Uint8Array>): Promise<Statement> {
 		const reader = file.getReader();
 		const chunks: Uint8Array[] = [];
@@ -25,6 +28,6 @@ export class PDFImporter extends Subscriber<Event, Progress> implements Importer
 		const result = await pdf2text(Buffer.concat(chunks));
 		return {
 			content: result.text,
-		}
+		};
 	}
 }

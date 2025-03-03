@@ -4,10 +4,10 @@ import type { Scan } from "~/scanner";
 export class JSONExporter implements Exporter {
 	private isFirstItem = false;
 
-	constructor(public readonly canFail: boolean) { }
+	constructor(public readonly canFail: boolean) {}
 
 	export(scan: Scan): ReadableStream<Uint8Array> {
-		const encoder = new TextEncoder()
+		const encoder = new TextEncoder();
 		const iterator = scan[Symbol.iterator]();
 
 		return new ReadableStream({
@@ -43,7 +43,7 @@ export class JSONExporter implements Exporter {
 				// Encode and enqueue the JSON data
 				const data = JSON.stringify(attempt.value);
 				controller.enqueue(encoder.encode(data));
-			}
-		})
+			},
+		});
 	}
 }

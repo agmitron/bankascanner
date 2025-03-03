@@ -4,6 +4,7 @@ import {
 	type Version,
 } from "~/scanner/version";
 import { JusanV2024 } from "./jusan.2024";
+import type { Statement } from "~/statement";
 
 type JusanVersion = Version<"2024">; // add more versions here if needed
 
@@ -14,7 +15,7 @@ export class Versioner implements IVersioner<JusanVersion> {
 		return versions;
 	}
 
-	public async guess(_: Buffer): Promise<JusanVersion> {
+	public guess(_: Statement): JusanVersion {
 		return DEFAULT_VERSION;
 	}
 

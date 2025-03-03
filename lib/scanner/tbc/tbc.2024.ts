@@ -12,7 +12,7 @@ export class TBCV2024 implements Scanner {
 		this._currency = "";
 	}
 
-	public async scan(s: Statement): Promise<Scan> {
+	public scan(s: Statement): Scan {
 		const pieces = this._split(s.content);
 
 		this._determineCurrency(s.content);

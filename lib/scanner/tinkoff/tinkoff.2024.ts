@@ -11,7 +11,7 @@ const FAKE_DATE = `10.10.1010
 08:32`;
 
 export class TinkoffV2024 implements Scanner {
-	public async scan(s: Statement): Promise<Scan> {
+	public scan(s: Statement): Scan {
 		const pieces = this._split(s.content);
 		return pieces.map((r) => this._parsePiece(r));
 	}

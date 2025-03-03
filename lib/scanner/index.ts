@@ -39,22 +39,22 @@ export interface Success {
 
 export type Attempt = Either<Failure, Success>;
 
-/** 
- * Represents a collection of attempts. 
- * 
- * Some operations might be parsed successfully, but some might not. 
- * 
+/**
+ * Represents a collection of attempts.
+ *
+ * Some operations might be parsed successfully, but some might not.
+ *
  * Using a collection is convenient to handle both cases and keep the order of operations.
  */
 export type Scan = Iterable<Attempt>;
 
 export interface Scanner {
 	/**
- * Scans the provided statement and returns the result.
- * @param statement The statement to scan.
- * @returns The scanned data.
- */
-	scan(statement: Statement): Promise<Scan>;
+	 * Scans the provided statement and returns the result.
+	 * @param statement The statement to scan.
+	 * @returns The scanned data.
+	 */
+	scan(statement: Statement): Scan;
 }
 
 export const run = (bank: string, version: string, statement: Statement) => {

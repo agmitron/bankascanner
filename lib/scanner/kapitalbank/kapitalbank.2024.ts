@@ -32,7 +32,7 @@ interface Extractor {
 export class KapitalBankV2024 implements Scanner {
 	private _profile: Profile | null = null;
 
-	public async scan(s: Statement): Promise<Scan> {
+	public scan(s: Statement): Scan {
 		const prepared = this._prepare(s.content);
 		const pieces = this._split(prepared);
 		return pieces.map((p) => this._parsePiece(p));
