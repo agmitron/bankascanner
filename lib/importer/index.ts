@@ -1,5 +1,5 @@
 import type { Statement } from "~/statement";
-import type { Reader as Reader } from "./reader";
+import type {  Reader } from "./reader";
 import { PDFImporter } from "./pdf";
 
 const importers = {

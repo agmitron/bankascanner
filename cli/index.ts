@@ -37,7 +37,7 @@ async function main() {
 	const outputPath = path.resolve(__dirname, "..", argv.out);
 
 	const input = fs.createReadStream(inputPath);
-	const importReader = new Reader(Readable.toWeb(input))
+	const importReader = new Reader(Readable.toWeb(input));
 
 	const statement = await imp.import(importReader);
 	const scan = scanner.run(argv.bank, argv.version, statement);
