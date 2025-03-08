@@ -11,22 +11,23 @@ import type { Statement } from "~/statement";
 type Piece = string;
 
 /**
- * Extractor is a short description of how to split the full file to pieces
+ * A short description of how to split the full file to pieces
  * and how to extract an Operation from each piece.
  *
  * It's usually enough to parse a statement, so there are just two methods.
  */
-interface Extractor {
-	pieces: (raw: string) => Piece[];
+export interface Parser {
+	prepare?: (full: string) => string;
+	pieces: (prepared: string) => Piece[];
 	operation: (piece: string) => Attempt;
 }
 
 export function build<V extends Version<string>>(
 	name: string,
-	extractors: Record<Version<V>, Extractor>,
+	extractors: Record<Version<V>, Parser>,
 	guessVersion: (s: Statement) => V = () => DEFAULT_VERSION as V,
-): Versioner<V> {
-	class Implementation implements Versioner<V> {
+): new () => Versioner<V> {
+	return class Implementation implements Versioner<V> {
 		guess(s: Statement): V {
 			return guessVersion(s);
 		}
@@ -39,7 +40,10 @@ export function build<V extends Version<string>>(
 
 			class S implements Scanner {
 				scan(s: Statement): Scan {
-					const pieces = extractor.pieces(s.content);
+					const prepared = extractor.prepare
+						? extractor.prepare(s.content)
+						: s.content;
+					const pieces = extractor.pieces(prepared);
 					return pieces.map(extractor.operation);
 				}
 			}
@@ -50,7 +54,5 @@ export function build<V extends Version<string>>(
 		get supported(): V[] {
 			return Object.keys(extractors) as V[];
 		}
-	}
-
-	return new Implementation();
+	};
 }

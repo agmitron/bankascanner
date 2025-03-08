@@ -2,7 +2,7 @@ import type { Exporter } from "~/exporter";
 import type { Scan } from "~/scanner";
 
 export class JSONExporter implements Exporter {
-	private isFirstItem = false;
+	private _isFirstItem = false;
 
 	constructor(public readonly canFail: boolean) {}
 
@@ -13,7 +13,7 @@ export class JSONExporter implements Exporter {
 		return new ReadableStream({
 			start: (controller) => {
 				controller.enqueue(encoder.encode("[\n"));
-				this.isFirstItem = true;
+				this._isFirstItem = true;
 			},
 
 			pull: (controller) => {
@@ -34,10 +34,10 @@ export class JSONExporter implements Exporter {
 				}
 
 				// Add comma for all but the first item
-				if (!this.isFirstItem) {
+				if (!this._isFirstItem) {
 					controller.enqueue(encoder.encode(",\n"));
 				} else {
-					this.isFirstItem = false;
+					this._isFirstItem = false;
 				}
 
 				// Encode and enqueue the JSON data

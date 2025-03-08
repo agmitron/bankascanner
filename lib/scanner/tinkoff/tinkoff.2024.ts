@@ -1,4 +1,3 @@
-import pdf2data from "pdf-parse";
 import { otherCurrency } from "~/currency";
 import type { Attempt, Scanner, Scan } from "~/scanner";
 import type { Operation } from "~/operation";
