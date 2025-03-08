@@ -8,8 +8,9 @@ import * as importer from "~/importer";
 
 import { DEFAULT_VERSION } from "~/scanner/version";
 import { UnsupportedFormatError } from "~/exporter/error";
-import { Reader, Subscriber } from "~/importer/reader";
-import { Readable, Writable } from "node:stream";
+import { Readable } from "node:stream";
+import { StreamLoader } from "~/importer/loader";
+import { DiskSaver } from "~/exporter/saver";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)
@@ -36,19 +37,23 @@ async function main() {
 	const inputPath = path.resolve(__dirname, "..", argv.in);
 	const outputPath = path.resolve(__dirname, "..", argv.out);
 
-	const input = fs.createReadStream(inputPath);
-	const importReader = new Reader(Readable.toWeb(input));
+	const inputFileSize = fs.statSync(inputPath).size;
+	const importLoader = new StreamLoader(Readable.toWeb(fs.createReadStream(inputPath)));
+	// importLoader.subscribe((_i, _s, bytesRead) => {
+	// 	console.log(`[IMPORT] ${Math.round((bytesRead / inputFileSize) * 100)}%`);
+	// })
 
-	const statement = await imp.import(importReader);
+	const statement = await imp.import(importLoader);
+
 	const scan = scanner.run(argv.bank, argv.version, statement);
 
 	const output = exporter.run(scan, argv.out);
-	const exportReader = new Reader(output);
+	const exportLoader = new StreamLoader(output);
+	// exportLoader.subscribe((index) => {
+	// 	console.log(`Exporting operation ${index}...`);
+	// })
 
-	const writeStream = fs.createWriteStream(outputPath);
-	for await (const chunk of exportReader) {
-		writeStream.write(chunk);
-	}
+	await new DiskSaver(outputPath).save(exportLoader);
 }
 
 main().catch(console.error);

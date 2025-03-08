@@ -7,7 +7,7 @@ import path from "node:path";
 import { createReadStream } from "node:fs";
 import { PDFImporter } from "~/importer/pdf";
 import { Readable } from "node:stream";
-import { Reader } from "~/importer/reader";
+import { StreamLoader } from "~/importer/loader";
 
 describe("TBC", () => {
 	const instance = new TBCV2024();
@@ -273,7 +273,7 @@ GE00TB0000000000000000`,
 		);
 
 		const statement = await new PDFImporter().import(
-			new Reader(Readable.toWeb(stream)),
+			new StreamLoader(Readable.toWeb(stream)),
 		);
 
 		const scan = await instance.scan(statement);

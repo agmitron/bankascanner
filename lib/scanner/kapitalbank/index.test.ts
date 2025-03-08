@@ -5,7 +5,7 @@ import { ddmmyyyy } from "~/date";
 import { createReadStream } from "node:fs";
 import { Readable } from "node:stream";
 import { PDFImporter } from "~/importer/pdf";
-import { Reader } from "~/importer/reader";
+import { StreamLoader } from "~/importer/loader";
 import { Versioner } from ".";
 
 describe("Kapitalbank", () => {
@@ -171,7 +171,7 @@ describe("Kapitalbank", () => {
 			);
 
 			const statement = await new PDFImporter().import(
-				new Reader(Readable.toWeb(stream)),
+				new StreamLoader(Readable.toWeb(stream)),
 			);
 
 			const actual = scanner.scan(statement);

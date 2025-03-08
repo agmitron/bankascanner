@@ -1,5 +1,5 @@
 import type { Statement } from "~/statement";
-import type {  Reader } from "./reader";
+import type { StreamLoader } from "./loader";
 import { PDFImporter } from "./pdf";
 
 const importers = {
@@ -13,7 +13,7 @@ type Format = keyof typeof importers;
  * Since statements might be stored in different formats, there might be different implementations of this interface.
  */
 export interface Importer {
-	import(r: Reader): Promise<Statement>;
+	import(r: AsyncIterable<Uint8Array>): Promise<Statement>;
 }
 
 export const choices = () => Object.keys(importers);
