@@ -27,7 +27,6 @@ const argv = yargs(hideBin(process.argv))
 	.check((argv) => scanner.get(argv.bank))
 	.parseSync();
 
-// TODO: refactor
 async function main() {
 	const imp = importer.choose("pdf");
 	if (!imp) {
@@ -35,15 +34,13 @@ async function main() {
 	}
 
 	const inputPath = path.resolve(__dirname, "..", argv.in);
-	const outputPath = path.resolve(__dirname, "..", argv.out);
-
 	const input = Readable.toWeb(fs.createReadStream(inputPath))
 	const statement = await imp.import(input);
 
 	const scan = scanner.run(argv.bank, argv.version, statement);
 
+	const outputPath = path.resolve(__dirname, "..", argv.out);
 	const output = exporter.run(scan, outputPath);
-
 	await new Disk(outputPath).save(output);
 }
 
