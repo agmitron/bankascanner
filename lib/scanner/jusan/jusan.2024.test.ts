@@ -264,7 +264,7 @@ GEO, TBILISI`,
 
 		const statement: Statement = {
 			content: stream.toString(),
-		}
+		};
 
 		const scan = instance.scan(statement);
 

@@ -180,14 +180,13 @@ describe("Tinkoff", () => {
 			},
 		];
 
-
 		const buffer = readFileSync(
 			path.resolve(__dirname, "./__fixtures__/test.txt"),
-		)
+		);
 
 		const statement: Statement = {
 			content: buffer.toString(),
-		}
+		};
 
 		const scan = instance.scan(statement);
 

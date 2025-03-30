@@ -271,7 +271,7 @@ GE00TB0000000000000000`,
 
 		const statement: Statement = {
 			content: buffer.toString(),
-		}
+		};
 
 		const scan = instance.scan(statement);
 		const actual10firstRows = Array.from(scan)

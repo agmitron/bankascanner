@@ -2,7 +2,7 @@ import path from "node:path";
 import { test, describe, expect } from "vitest";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
-import {  readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { Versioner } from ".";
 import type { Statement } from "~/statement";
 
@@ -170,7 +170,7 @@ describe("Kapitalbank", () => {
 
 			const statement: Statement = {
 				content: buffer.toString(),
-			}
+			};
 
 			const actual = scanner.scan(statement);
 

@@ -19,7 +19,7 @@ async function run() {
 	const pdf = await readFile(path.resolve(__dirname, argv.in));
 	const { text } = await pdf2text(pdf);
 
-	const out = path.resolve(__dirname, argv.out)
+	const out = path.resolve(__dirname, argv.out);
 	return writeFile(out, text);
 }
 
