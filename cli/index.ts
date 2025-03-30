@@ -9,8 +9,8 @@ import * as importer from "~/importer";
 import { DEFAULT_VERSION } from "~/scanner/version";
 import { UnsupportedFormatError } from "~/exporter/error";
 import { Readable } from "node:stream";
-import { StreamLoader } from "~/importer/loader";
-import { DiskSaver } from "~/exporter/saver";
+import { Tracker } from "~/importer/loader";
+import { Disk } from "~/exporter/storage";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)
@@ -37,23 +37,14 @@ async function main() {
 	const inputPath = path.resolve(__dirname, "..", argv.in);
 	const outputPath = path.resolve(__dirname, "..", argv.out);
 
-	const inputFileSize = fs.statSync(inputPath).size;
-	const importLoader = new StreamLoader(Readable.toWeb(fs.createReadStream(inputPath)));
-	// importLoader.subscribe((_i, _s, bytesRead) => {
-	// 	console.log(`[IMPORT] ${Math.round((bytesRead / inputFileSize) * 100)}%`);
-	// })
-
-	const statement = await imp.import(importLoader);
+	const input = Readable.toWeb(fs.createReadStream(inputPath))
+	const statement = await imp.import(input);
 
 	const scan = scanner.run(argv.bank, argv.version, statement);
 
-	const output = exporter.run(scan, argv.out);
-	const exportLoader = new StreamLoader(output);
-	// exportLoader.subscribe((index) => {
-	// 	console.log(`Exporting operation ${index}...`);
-	// })
+	const output = exporter.run(scan, outputPath);
 
-	await new DiskSaver(outputPath).save(exportLoader);
+	await new Disk(outputPath).save(output);
 }
 
 main().catch(console.error);

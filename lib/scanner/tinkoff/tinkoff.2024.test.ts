@@ -7,7 +7,7 @@ import path from "node:path";
 import { createReadStream } from "node:fs";
 import { PDFImporter } from "~/importer/pdf";
 import { Readable } from "node:stream";
-import { StreamLoader } from "~/importer/loader";
+import { Tracker } from "~/importer/loader";
 
 describe("Tinkoff", () => {
 	const instance = new TinkoffV2024();
@@ -188,7 +188,7 @@ describe("Tinkoff", () => {
 		);
 
 		const statement = await new PDFImporter().import(
-			new StreamLoader(Readable.toWeb(stream)),
+			new Tracker(Readable.toWeb(stream)),
 		);
 
 		const scan = await instance.scan(statement);

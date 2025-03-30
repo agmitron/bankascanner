@@ -1,5 +1,4 @@
 import type { Statement } from "~/statement";
-import type { StreamLoader } from "./loader";
 import { PDFImporter } from "./pdf";
 
 const importers = {
@@ -19,10 +18,10 @@ export interface Importer {
 export const choices = () => Object.keys(importers);
 
 export function choose(f: Format): Importer | null {
-	const Imp = importers[f];
-	if (!Imp) {
+	const Impl = importers[f];
+	if (!Impl) {
 		return null;
 	}
 
-	return new Imp();
+	return new Impl();
 }

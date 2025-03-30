@@ -4,11 +4,11 @@ type Cancellation = () => void;
 /**
  * An async iterable that reads data from a source and notifies subscribers about the amount of bytes read.
  */
-export interface Loader extends AsyncIterable<Uint8Array> {
-	subscribe(s: Subscription): Cancellation;
+export interface Trackable extends AsyncIterable<Uint8Array> {
+	track(s: Subscription): Cancellation;
 }
 
-export class StreamLoader implements Loader {
+export class Tracker implements Trackable {
 	private readonly _iterable: AsyncIterable<Uint8Array>;
 	private _subscriptions: Set<Subscription> = new Set();
 
@@ -16,7 +16,7 @@ export class StreamLoader implements Loader {
 		this._iterable = iterable;
 	}
 
-	public subscribe(s: Subscription): Cancellation {
+	public track(s: Subscription): Cancellation {
 		this._subscriptions.add(s);
 
 		return () => {
@@ -25,14 +25,14 @@ export class StreamLoader implements Loader {
 	}
 
 	async *[Symbol.asyncIterator]() {
-		let index = -1
+		let index = -1;
 		let totalBytesRead = 0;
 
 		for await (const chunk of this._iterable) {
-			index += 1
+			index += 1;
 			totalBytesRead += chunk.length;
 			this._notify(index, chunk.length, totalBytesRead);
-			
+
 			yield chunk;
 		}
 	}

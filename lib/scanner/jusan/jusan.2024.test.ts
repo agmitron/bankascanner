@@ -7,7 +7,7 @@ import path from "node:path";
 import { createReadStream } from "node:fs";
 import { Readable } from "node:stream";
 import { PDFImporter } from "~/importer/pdf";
-import { StreamLoader } from "~/importer/loader";
+import { Tracker } from "~/importer/loader";
 
 describe("Jusan", () => {
 	const instance = new JusanV2024();
@@ -266,7 +266,7 @@ GEO, TBILISI`,
 		);
 
 		const statement = await new PDFImporter().import(
-			new StreamLoader(Readable.toWeb(stream)),
+			new Tracker(Readable.toWeb(stream)),
 		);
 
 		const scan = await instance.scan(statement);
