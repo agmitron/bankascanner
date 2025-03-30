@@ -2,10 +2,9 @@ import pdf2text from "pdf-parse";
 import { Buffer } from "buffer";
 import type { Importer } from "~/importer";
 import type { Statement } from "~/statement";
-import type { Tracker } from "./loader";
 
 export class PDFImporter implements Importer {
-	async import(file: Tracker): Promise<Statement> {
+	async import(file: AsyncIterable<Uint8Array>): Promise<Statement> {
 		// Since PDF is a binary format, we need to read the whole file into memory.
 		const chunks: Uint8Array[] = [];
 

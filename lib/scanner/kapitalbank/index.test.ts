@@ -2,11 +2,9 @@ import path from "node:path";
 import { test, describe, expect } from "vitest";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
-import { createReadStream } from "node:fs";
-import { Readable } from "node:stream";
-import { PDFImporter } from "~/importer/pdf";
-import { Tracker } from "~/importer/loader";
+import {  readFileSync } from "node:fs";
 import { Versioner } from ".";
+import type { Statement } from "~/statement";
 
 describe("Kapitalbank", () => {
 	const versioner = new Versioner();
@@ -166,13 +164,13 @@ describe("Kapitalbank", () => {
 				},
 			];
 
-			const stream = createReadStream(
-				path.resolve(__dirname, "./__fixtures__/test.pdf"),
+			const buffer = readFileSync(
+				path.resolve(__dirname, "./__fixtures__/test.txt"),
 			);
 
-			const statement = await new PDFImporter().import(
-				new Tracker(Readable.toWeb(stream)),
-			);
+			const statement: Statement = {
+				content: buffer.toString(),
+			}
 
 			const actual = scanner.scan(statement);
 

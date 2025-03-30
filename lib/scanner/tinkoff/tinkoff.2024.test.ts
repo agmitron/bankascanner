@@ -2,12 +2,9 @@ import { describe, expect, test } from "vitest";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { TinkoffV2024 } from "./tinkoff.2024";
-import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { createReadStream } from "node:fs";
-import { PDFImporter } from "~/importer/pdf";
-import { Readable } from "node:stream";
-import { Tracker } from "~/importer/loader";
+import type { Statement } from "~/statement";
+import { readFileSync } from "node:fs";
 
 describe("Tinkoff", () => {
 	const instance = new TinkoffV2024();
@@ -183,15 +180,16 @@ describe("Tinkoff", () => {
 			},
 		];
 
-		const stream = createReadStream(
-			path.resolve(__dirname, "./__fixtures__/test.pdf"),
-		);
 
-		const statement = await new PDFImporter().import(
-			new Tracker(Readable.toWeb(stream)),
-		);
+		const buffer = readFileSync(
+			path.resolve(__dirname, "./__fixtures__/test.txt"),
+		)
 
-		const scan = await instance.scan(statement);
+		const statement: Statement = {
+			content: buffer.toString(),
+		}
+
+		const scan = instance.scan(statement);
 
 		const actual10firstRows = Array.from(scan)
 			.slice(0, 10)

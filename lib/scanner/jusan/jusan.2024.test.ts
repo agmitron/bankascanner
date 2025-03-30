@@ -2,12 +2,9 @@ import { describe, expect, test } from "vitest";
 import type { Operation } from "~/operation";
 import { ddmmyyyy } from "~/date";
 import { JusanV2024 } from "./jusan.2024";
-import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { createReadStream } from "node:fs";
-import { Readable } from "node:stream";
-import { PDFImporter } from "~/importer/pdf";
-import { Tracker } from "~/importer/loader";
+import { readFileSync } from "node:fs";
+import type { Statement } from "~/statement";
 
 describe("Jusan", () => {
 	const instance = new JusanV2024();
@@ -261,15 +258,15 @@ GEO, TBILISI`,
 			},
 		];
 
-		const stream = createReadStream(
-			path.resolve(__dirname, "./__fixtures__/test.pdf"),
+		const stream = readFileSync(
+			path.resolve(__dirname, "./__fixtures__/test.txt"),
 		);
 
-		const statement = await new PDFImporter().import(
-			new Tracker(Readable.toWeb(stream)),
-		);
+		const statement: Statement = {
+			content: stream.toString(),
+		}
 
-		const scan = await instance.scan(statement);
+		const scan = instance.scan(statement);
 
 		const actual10firstRows = Array.from(scan).slice(0, 10);
 
