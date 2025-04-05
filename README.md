@@ -21,7 +21,7 @@ pnpm add bankascanner
 ```typescript
 import { run, choices } from 'bankascanner';
 
-// Get list of supported banks
+// Get list of supported banks (e.g. to show in a dropdown)
 const supportedBanks = choices(); // Returns: ['kapitalbank', 'tinkoff', 'jusan', 'tbc']
 
 // Parse a bank statement
