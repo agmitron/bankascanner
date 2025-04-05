@@ -1,4 +1,5 @@
 import { JSONExporter } from "./json";
+import { CSVExporter } from "./csv";
 import { UnsupportedFormatError } from "./error";
 import type { Scan } from "~/scanner";
 
@@ -10,8 +11,7 @@ export interface Exporter {
 
 const exporters: Record<string, Exporter> = {
 	json: new JSONExporter(false),
-
-	// TODO: csv
+	csv: new CSVExporter(),
 };
 
 export const run = (

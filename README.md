@@ -4,6 +4,56 @@ A tool to convert your PDF bank statements to more convenient formats as JSON, C
 
 ## Usage
 
+### Package
+
+#### Installation
+
+```bash
+npm install bankascanner
+# or
+yarn add bankascanner
+# or
+pnpm add bankascanner
+```
+
+#### API Usage
+
+```typescript
+import { run, choices } from 'bankascanner';
+
+// Get list of supported banks (e.g. to show in a dropdown)
+const supportedBanks = choices(); // Returns: ['kapitalbank', 'tinkoff', 'jusan', 'tbc']
+
+// Parse a bank statement
+const result = run('tinkoff', '1.0', statement);
+
+// The result is an iterable of attempts, where each attempt is either:
+// - Success: Contains the parsed operation
+// - Failure: Contains information about parsing failure including:
+//   - piece: The unparsed text
+//   - field: The specific field that failed to parse
+//   - reason: The reason for the failure
+
+// Example usage with error handling
+for (const attempt of result) {
+  if (attempt.isRight()) {
+    // Success case
+    const operation = attempt.value.operation;
+    console.log('Successfully parsed operation:', operation);
+  } else {
+    // Failure case
+    const failure = attempt.value;
+    console.error('Failed to parse:', {
+      text: failure.piece,
+      field: failure.field,
+      reason: failure.reason
+    });
+  }
+}
+```
+
+### CLI
+
 ```bash
 npx tsx ./cli --in path/to/in.pdf --out path/to/out.json --bank <bank_name>
 # or 
