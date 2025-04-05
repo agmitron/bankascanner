@@ -1,11 +1,16 @@
-import fs from "node:fs/promises";
+import fs from "node:fs";
 import yargs from "yargs";
 import path from "node:path";
 import { hideBin } from "yargs/helpers";
-import * as importer from "~/import";
-import * as exporter from "~/export";
+import * as scanner from "~/scanner";
+import * as exporter from "~/exporter";
+import * as importer from "~/importer";
 
-import { DEFAULT_VERSION } from "~/version";
+import { DEFAULT_VERSION } from "~/scanner/version";
+import { UnsupportedFormatError } from "~/exporter/error";
+import { Readable } from "node:stream";
+import { Tracker } from "~/importer/loader";
+import { Disk } from "~/exporter/storage";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)
@@ -15,20 +20,28 @@ const argv = yargs(hideBin(process.argv))
 		bank: {
 			type: "string",
 			demandOption: true,
-			choices: importer.choices(),
+			choices: scanner.choices(),
 		},
 		version: { type: "string", alias: "v", default: DEFAULT_VERSION },
 	})
-	.check((argv) => importer.get(argv.bank))
+	.check((argv) => scanner.get(argv.bank))
 	.parseSync();
 
 async function main() {
-	const pdf = await fs.readFile(path.resolve(__dirname, "..", argv.in));
+	const imp = importer.choose("pdf");
+	if (!imp) {
+		throw new UnsupportedFormatError("pdf", importer.choices());
+	}
 
-	const rows = await importer.run(argv.bank, argv.version, pdf);
-	const buffer = await exporter.run(rows, argv.out);
+	const inputPath = path.resolve(__dirname, "..", argv.in);
+	const input = Readable.toWeb(fs.createReadStream(inputPath));
+	const statement = await imp.import(input);
 
-	await fs.writeFile(path.resolve(__dirname, "..", argv.out), buffer);
+	const scan = scanner.run(argv.bank, argv.version, statement);
+
+	const outputPath = path.resolve(__dirname, "..", argv.out);
+	const output = exporter.run(scan, outputPath);
+	await new Disk(outputPath).save(output);
 }
 
 main().catch(console.error);
