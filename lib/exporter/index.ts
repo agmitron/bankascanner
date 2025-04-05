@@ -1,7 +1,7 @@
 import { JSONExporter } from "./json";
+import { CSVExporter } from "./csv";
 import { UnsupportedFormatError } from "./error";
 import type { Scan } from "~/scanner";
-import { CSVExporter } from "./csv";
 
 export interface Exporter {
 	readonly canFail: boolean;
