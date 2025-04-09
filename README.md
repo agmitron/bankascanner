@@ -1,6 +1,6 @@
 # Bankascanner
 
-A tool to convert your PDF bank statements to more convenient formats as JSON, CSV (soon). 
+A tool to convert your PDF bank statements to more convenient formats such as JSON, CSV and any other. 
 
 ## Usage
 
