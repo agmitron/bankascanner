@@ -12,7 +12,7 @@ import { UnknownBankError } from "~/bank";
 import type { Either } from "~/either";
 import type { Statement } from "~/statement";
 
-export const scanners: Record<string, Versioner<string>> = {
+export const defaultScanners: Record<string, Versioner<string>> = {
 	kapitalbank: new kapitalbank.Versioner(),
 	tinkoff: new tinkoff.Versioner(),
 	jusan: new jusan.Versioner(),
@@ -57,8 +57,23 @@ export interface Scanner {
 	scan(statement: Statement): Scan;
 }
 
-export const run = (bank: string, version: string, statement: Statement) => {
-	const scanner = get(bank, version);
+/**
+ *
+ * @param bank The bank name.
+ * @param version Version of the bank statement.
+ * @param statement The statement to be scanned.
+ * @param _scanners The scanners to use. If not provided, the default scanners will be used.
+ * @returns The scanned rows. Some of them might be failed to be parsed.
+ * @throws {UnknownVersionError} If the version is not supported.
+ * @throws {UnknownBankError} If the bank is not supported.
+ */
+export const run = (
+	bank: string,
+	version: string,
+	statement: Statement,
+	_scanners = defaultScanners,
+) => {
+	const scanner = get(bank, version, _scanners);
 	if (!scanner) {
 		throw new UnknownVersionError(version, bank);
 	}
@@ -66,13 +81,27 @@ export const run = (bank: string, version: string, statement: Statement) => {
 	return scanner.scan(statement);
 };
 
-export const choices = () => Object.keys(scanners);
+/**
+ *
+ * @param _scanners Scanners to use. If not provided, the default scanners will be used.
+ * @returns An array of bank names.
+ */
+export const choices = (_scanners = defaultScanners) => Object.keys(_scanners);
 
+/**
+ *
+ * @param bank The bank name.
+ * @param version The version of the bank statement.
+ * @param _scanners The scanners to use. If not provided, the default scanners will be used.
+ * @returns Either the scanner or null.
+ * @throws {UnknownBankError} If the bank is not supported.
+ */
 export const get = (
 	bank: string,
 	version = DEFAULT_VERSION,
+	_scanners = defaultScanners,
 ): Scanner | null => {
-	const versioner = scanners[bank];
+	const versioner = _scanners[bank];
 	if (!versioner) {
 		throw new UnknownBankError(bank);
 	}

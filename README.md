@@ -19,13 +19,18 @@ pnpm add bankascanner
 #### API Usage
 
 ```typescript
-import { run, choices } from 'bankascanner';
+import { scanner, importer, exporter } from 'bankascanner';
+
+const scanners = {
+  ...scanner.defaultScanners, // use built-in scanners
+  // ...and append your own scanners if needed.
+}
 
 // Get list of supported banks (e.g. to show in a dropdown)
-const supportedBanks = choices(); // Returns: ['kapitalbank', 'tinkoff', 'jusan', 'tbc']
+const supportedBanks = scanner.choices(scanners); // Returns: ['kapitalbank', 'tinkoff', 'jusan', 'tbc']
 
 // Parse a bank statement
-const result = run('tinkoff', '1.0', statement);
+const result = scanner.run('tinkoff', '1.0', statement, scanners);
 
 // The result is an iterable of attempts, where each attempt is either:
 // - Success: Contains the parsed operation
