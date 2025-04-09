@@ -58,7 +58,7 @@ export interface Scanner {
 }
 
 /**
- * 
+ *
  * @param bank The bank name.
  * @param version Version of the bank statement.
  * @param statement The statement to be scanned.
@@ -68,8 +68,8 @@ export interface Scanner {
  * @throws {UnknownBankError} If the bank is not supported.
  */
 export const run = (
-	bank: string, 
-	version: string, 
+	bank: string,
+	version: string,
 	statement: Statement,
 	_scanners = defaultScanners,
 ) => {
@@ -82,14 +82,14 @@ export const run = (
 };
 
 /**
- * 
+ *
  * @param _scanners Scanners to use. If not provided, the default scanners will be used.
  * @returns An array of bank names.
  */
 export const choices = (_scanners = defaultScanners) => Object.keys(_scanners);
 
 /**
- * 
+ *
  * @param bank The bank name.
  * @param version The version of the bank statement.
  * @param _scanners The scanners to use. If not provided, the default scanners will be used.
