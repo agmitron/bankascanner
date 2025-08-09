@@ -1,5 +1,5 @@
-import pdf2text from "pdf-parse";
 import { Buffer } from "buffer";
+import { getDocument } from "pdfjs-dist";
 import type { Importer } from "~/importer";
 import type { Statement } from "~/statement";
 
@@ -12,9 +12,25 @@ export class PDFImporter implements Importer {
 			chunks.push(chunk);
 		}
 
-		const result = await pdf2text(Buffer.concat(chunks));
+		const data = Buffer.concat(chunks);
+
+		const loadingTask = getDocument({ data });
+		const pdf = await loadingTask.promise;
+
+		let textContentAggregate = "";
+		for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+			const page = await pdf.getPage(pageNumber);
+			const textContent = await page.getTextContent();
+			const pageText = (textContent.items as any[])
+				.map((item: any) => (typeof item.str === "string" ? item.str : ""))
+				.join(" ");
+			textContentAggregate += pageText + "\n";
+		}
+
+		await pdf.cleanup();
+
 		return {
-			content: result.text,
+			content: textContentAggregate,
 		};
 	}
 }

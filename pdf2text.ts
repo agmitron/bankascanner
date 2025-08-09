@@ -6,7 +6,7 @@ import { hideBin } from "yargs/helpers";
 
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import pdf2text from "pdf-parse";
+import { PDFImporter } from "./lib/importer/pdf";
 
 const argv = yargs(hideBin(process.argv))
 	.options({
@@ -16,11 +16,17 @@ const argv = yargs(hideBin(process.argv))
 	.parseSync();
 
 async function run() {
-	const pdf = await readFile(path.resolve(__dirname, argv.in));
-	const { text } = await pdf2text(pdf);
+    const pdfData = await readFile(path.resolve(__dirname, argv.in));
 
-	const out = path.resolve(__dirname, argv.out);
-	return writeFile(out, text);
+    async function* toAsyncIterable(buffer: Uint8Array): AsyncIterable<Uint8Array> {
+        yield buffer;
+    }
+
+    const importer = new PDFImporter();
+    const { content } = await importer.import(toAsyncIterable(pdfData));
+
+    const out = path.resolve(__dirname, argv.out);
+    return writeFile(out, content);
 }
 
 run().catch(console.error);
