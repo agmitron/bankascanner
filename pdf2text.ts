@@ -16,17 +16,19 @@ const argv = yargs(hideBin(process.argv))
 	.parseSync();
 
 async function run() {
-    const pdfData = await readFile(path.resolve(__dirname, argv.in));
+	const pdfData = await readFile(path.resolve(__dirname, argv.in));
 
-    async function* toAsyncIterable(buffer: Uint8Array): AsyncIterable<Uint8Array> {
-        yield buffer;
-    }
+	async function* toAsyncIterable(
+		buffer: Uint8Array,
+	): AsyncIterable<Uint8Array> {
+		yield buffer;
+	}
 
-    const importer = new PDFImporter();
-    const { content } = await importer.import(toAsyncIterable(pdfData));
+	const importer = new PDFImporter();
+	const { content } = await importer.import(toAsyncIterable(pdfData));
 
-    const out = path.resolve(__dirname, argv.out);
-    return writeFile(out, content);
+	const out = path.resolve(__dirname, argv.out);
+	return writeFile(out, content);
 }
 
 run().catch(console.error);

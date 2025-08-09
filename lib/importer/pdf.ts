@@ -1,5 +1,6 @@
 import { Buffer } from "buffer";
 import { getDocument } from "pdfjs-dist";
+import { type TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 import type { Importer } from "~/importer";
 import type { Statement } from "~/statement";
 
@@ -21,10 +22,10 @@ export class PDFImporter implements Importer {
 		for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
 			const page = await pdf.getPage(pageNumber);
 			const textContent = await page.getTextContent();
-			const pageText = (textContent.items as any[])
-				.map((item: any) => (typeof item.str === "string" ? item.str : ""))
+			const pageText = (textContent.items as TextItem[])
+				.map((item) => (typeof item.str === "string" ? item.str : ""))
 				.join(" ");
-			textContentAggregate += pageText + "\n";
+			textContentAggregate += `${pageText}\n`;
 		}
 
 		await pdf.cleanup();
