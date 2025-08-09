@@ -1,6 +1,9 @@
 import { Buffer } from "buffer";
 import { getDocument } from "pdfjs-dist";
-import { type TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
+import {
+	type TextItem,
+	TextMarkedContent,
+} from "pdfjs-dist/types/src/display/api";
 import type { Importer } from "~/importer";
 import type { Statement } from "~/statement";
 
