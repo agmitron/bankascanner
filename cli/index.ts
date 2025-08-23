@@ -2,14 +2,10 @@ import fs from "node:fs";
 import yargs from "yargs";
 import path from "node:path";
 import { hideBin } from "yargs/helpers";
-import * as scanner from "~/scanner";
-import * as exporter from "~/exporter";
-import * as importer from "~/importer";
+import * as exporter from "../src/exporter";
+import * as importer from "../src/importer";
 
-import { DEFAULT_VERSION } from "~/scanner/version";
-import { UnsupportedFormatError } from "~/exporter/error";
 import { Readable } from "node:stream";
-import { Disk } from "~/exporter/storage";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)

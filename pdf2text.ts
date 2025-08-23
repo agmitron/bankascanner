@@ -6,7 +6,7 @@ import { hideBin } from "yargs/helpers";
 
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { PDFImporter } from "./lib/importer/pdf";
+import { PDFImporter } from "./src/importer/pdf";
 
 const argv = yargs(hideBin(process.argv))
 	.options({
