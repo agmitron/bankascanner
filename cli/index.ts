@@ -44,7 +44,9 @@ async function main() {
 		return Promise.resolve(left("Failed to serialize"));
 	}
 
-	await writeFile(argv.out, serialized.value);
+	const output = serialized.value;
+
+	await writeFile(argv.out, output);
 }
 
 main().catch(console.error);
