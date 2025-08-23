@@ -1,5 +1,6 @@
 import { left } from "@/lib/either";
 import { readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import type { Exporter } from "~/exporter";
@@ -29,10 +30,10 @@ async function resolve<T>(path: string): Promise<T> {
 }
 
 async function main() {
-	const importer = await resolve<Importer>(argv.importer);
-	const exporter = await resolve<Exporter>(argv.exporter);
+	const importer = await resolve<Importer>(path.resolve(argv.importer));
+	const exporter = await resolve<Exporter>(path.resolve(argv.exporter));
 
-	const input = await readFile(argv.in);
+	const input = await readFile(path.resolve(argv.in));
 
 	const scan = await importer(input);
 	if (scan.isLeft()) {
