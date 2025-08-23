@@ -1,6 +1,9 @@
 import { left, right } from "@/lib/either";
+import { readFile, writeFile } from "fs/promises";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import { Exporter } from "~/exporter";
+import { Importer } from "~/importer";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)
@@ -10,16 +13,28 @@ const argv = yargs(hideBin(process.argv))
 		importer: {
 			type: "string",
 			description: "Path to the importer implementation.",
+			demandOption: true,
 		},
 		exporter: {
 			type: "string",
 			description: "Path to the exporter implementation.",
+			demandOption: true,
 		},
 	})
 	.parseSync();
 
+async function resolve<T>(path: string): Promise<T> {
+	const module = await import(path);
+	return module.default;
+}
+
 async function main() {
-	const scan = await importer(file);
+	const importer = await resolve<Importer>(argv.importer);
+	const exporter = await resolve<Exporter>(argv.exporter);
+
+	const input = await readFile(argv.in);
+
+	const scan = await importer(input);
 	if (scan.isLeft()) {
 		return Promise.resolve(left("Failed to parse"));
 	}
@@ -29,7 +44,7 @@ async function main() {
 		return Promise.resolve(left("Failed to serialize"));
 	}
 
-	return Promise.resolve(right(serialized.value));
+	await writeFile(argv.out, serialized.value);
 }
 
 main().catch(console.error);
