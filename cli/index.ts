@@ -1,42 +1,35 @@
-import fs from "node:fs";
+import { left, right } from "@/lib/either";
 import yargs from "yargs";
-import path from "node:path";
 import { hideBin } from "yargs/helpers";
-import * as exporter from "../src/exporter";
-import * as importer from "../src/importer";
-
-import { Readable } from "node:stream";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)
 	.options({
 		in: { type: "string", demandOption: true },
 		out: { type: "string", demandOption: true },
-		bank: {
+		importer: {
 			type: "string",
-			demandOption: true,
-			choices: scanner.choices(),
+			description: "Path to the importer implementation.",
 		},
-		version: { type: "string", alias: "v", default: DEFAULT_VERSION },
+		exporter: {
+			type: "string",
+			description: "Path to the exporter implementation.",
+		},
 	})
-	.check((argv) => scanner.get(argv.bank))
 	.parseSync();
 
 async function main() {
-	const imp = importer.choose("pdf");
-	if (!imp) {
-		throw new UnsupportedFormatError("pdf", importer.choices());
+	const scan = await importer(file);
+	if (scan.isLeft()) {
+		return Promise.resolve(left("Failed to parse"));
 	}
 
-	const inputPath = path.resolve(__dirname, "..", argv.in);
-	const input = Readable.toWeb(fs.createReadStream(inputPath));
-	const statement = await imp.import(input);
+	const serialized = await exporter(scan.value);
+	if (serialized.isLeft()) {
+		return Promise.resolve(left("Failed to serialize"));
+	}
 
-	const scan = scanner.run(argv.bank, argv.version, statement);
-
-	const outputPath = path.resolve(__dirname, "..", argv.out);
-	const output = exporter.run(scan, outputPath);
-	await new Disk(outputPath).save(output);
+	return Promise.resolve(right(serialized.value));
 }
 
 main().catch(console.error);
