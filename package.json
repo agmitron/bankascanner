@@ -1,6 +1,6 @@
 {
   "name": "bankascanner",
-  "version": "0.0.14",
+  "version": "0.0.19",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/agmitron/bankascanner.git"
@@ -11,6 +11,39 @@
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./importer": {
+      "types": "./dist/importer/index.d.ts",
+      "require": "./dist/importer/index.js",
+      "default": "./dist/importer/index.js"
+    },
+    "./importer/*": {
+      "types": "./dist/importer/*/index.d.ts",
+      "require": "./dist/importer/*/index.js",
+      "default": "./dist/importer/*/index.js"
+    },
+    "./exporter": {
+      "types": "./dist/exporter/index.d.ts",
+      "require": "./dist/exporter/index.js",
+      "default": "./dist/exporter/index.js"
+    },
+    "./exporter/*": {
+      "types": "./dist/exporter/*/index.d.ts",
+      "require": "./dist/exporter/*/index.js",
+      "default": "./dist/exporter/*/index.js"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*/index.d.ts",
+      "require": "./dist/lib/*/index.js",
+      "default": "./dist/lib/*/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc -b tsconfig.build.json",
