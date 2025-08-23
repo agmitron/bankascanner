@@ -1,6 +1,6 @@
 import { left, right } from "@/lib/either";
-import { Exporter, Result } from "~/exporter";
-import { Scan } from "~/scan";
+import type { Exporter, Result } from "~/exporter";
+import type { Scan } from "~/scan";
 
 export function create(): Exporter {
 	return (s: Scan): Promise<Result> => {

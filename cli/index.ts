@@ -1,9 +1,9 @@
-import { left, right } from "@/lib/either";
-import { readFile, writeFile } from "fs/promises";
+import { left } from "@/lib/either";
+import { readFile, writeFile } from "node:fs/promises";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { Exporter } from "~/exporter";
-import { Importer } from "~/importer";
+import type { Exporter } from "~/exporter";
+import type { Importer } from "~/importer";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)

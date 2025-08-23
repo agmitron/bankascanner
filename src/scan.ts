@@ -1,5 +1,5 @@
-import { Either } from "../lib/either";
-import { Operation } from "./operation";
+import type { Either } from "../lib/either";
+import type { Operation } from "./operation";
 
 export type Failure = {
 	fields?: Record<keyof Operation, string>;
