@@ -9,7 +9,6 @@ import * as importer from "~/importer";
 import { DEFAULT_VERSION } from "~/scanner/version";
 import { UnsupportedFormatError } from "~/exporter/error";
 import { Readable } from "node:stream";
-import { Tracker } from "~/importer/loader";
 import { Disk } from "~/exporter/storage";
 
 const argv = yargs(hideBin(process.argv))
