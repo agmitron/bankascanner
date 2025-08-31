@@ -1,6 +1,6 @@
 {
   "name": "bankascanner",
-  "version": "0.0.19",
+  "version": "0.0.22",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/agmitron/bankascanner.git"
@@ -37,10 +37,15 @@
       "require": "./dist/exporter/*/index.js",
       "default": "./dist/exporter/*/index.js"
     },
+    "./lib": {
+      "types": "./dist/lib/index.d.ts",
+      "require": "./dist/lib/index.js",
+      "default": "./dist/lib/index.js"
+    },
     "./lib/*": {
-      "types": "./dist/lib/*/index.d.ts",
-      "require": "./dist/lib/*/index.js",
-      "default": "./dist/lib/*/index.js"
+      "types": "./dist/lib/*.d.ts",
+      "require": "./dist/lib/*.js",
+      "default": "./dist/lib/*.js"
     },
     "./package.json": "./package.json"
   },
