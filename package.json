@@ -1,11 +1,11 @@
 {
   "name": "bankascanner",
-  "version": "0.0.12",
+  "version": "0.0.23",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/agmitron/bankascanner.git"
   },
-  "description": "Parse your PDF bank statements into structured format.",
+  "description": "Parse your bank statements from PDF (or other input) into structured format.",
   "files": [
     "dist"
   ],
@@ -15,12 +15,69 @@
     ".": {
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
+    },
+    "./importer": {
+      "types": "./dist/importer/index.d.ts",
+      "require": "./dist/importer/index.js",
+      "default": "./dist/importer/index.js"
+    },
+    "./importer/*": {
+      "types": "./dist/importer/*/index.d.ts",
+      "require": "./dist/importer/*/index.js",
+      "default": "./dist/importer/*/index.js"
+    },
+    "./exporter": {
+      "types": "./dist/exporter/index.d.ts",
+      "require": "./dist/exporter/index.js",
+      "default": "./dist/exporter/index.js"
+    },
+    "./exporter/*": {
+      "types": "./dist/exporter/*/index.d.ts",
+      "require": "./dist/exporter/*/index.js",
+      "default": "./dist/exporter/*/index.js"
+    },
+    "./lib": {
+      "types": "./dist/lib/index.d.ts",
+      "require": "./dist/lib/index.js",
+      "default": "./dist/lib/index.js"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*.d.ts",
+      "require": "./dist/lib/*.js",
+      "default": "./dist/lib/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "importer": [
+        "dist/importer/index.d.ts"
+      ],
+      "importer/*": [
+        "dist/importer/*/index.d.ts"
+      ],
+      "exporter": [
+        "dist/exporter/index.d.ts"
+      ],
+      "exporter/*": [
+        "dist/exporter/*/index.d.ts"
+      ],
+      "lib": [
+        "dist/lib/index.d.ts"
+      ],
+      "lib/*": [
+        "dist/lib/*.d.ts"
+      ],
+      "*": [
+        "dist/*"
+      ]
     }
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && tsc -p tsconfig.build.json && tsc-alias",
+    "build": "npm run clean && tsc -b tsconfig.build.json",
+    "postbuild": "tsc-alias -p tsconfig.build.src.json --outDir dist && tsc-alias -p tsconfig.build.lib.json --outDir dist/lib",
     "start": "tsx cli",
     "test": "vitest",
     "test:watch": "vitest watch",
@@ -37,7 +94,7 @@
     "@types/yargs": "^17.0.33",
     "husky": "^9.1.7",
     "rimraf": "^6.0.1",
-    "tsc-alias": "^1.8.14",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.19.2",
     "typescript": "^5.5.4",
     "vite-tsconfig-paths": "^5.1.1",
@@ -46,7 +103,6 @@
   "dependencies": {
     "@types/papaparse": "^5.3.15",
     "buffer": "^6.0.3",
-    "fs": "^0.0.1-security",
     "papaparse": "^5.5.2",
     "patch-package": "^8.0.0",
     "pdfjs-dist": "^4.6.82",

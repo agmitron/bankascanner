@@ -1,46 +1,58 @@
-import fs from "node:fs";
-import yargs from "yargs";
+import { left } from "@/lib/either";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import * as scanner from "~/scanner";
-import * as exporter from "~/exporter";
 import * as importer from "~/importer";
-
-import { DEFAULT_VERSION } from "~/scanner/version";
-import { UnsupportedFormatError } from "~/exporter/error";
-import { Readable } from "node:stream";
-import { Disk } from "~/exporter/storage";
+import * as exporter from "~/exporter";
 
 const argv = yargs(hideBin(process.argv))
 	.version(false)
 	.options({
 		in: { type: "string", demandOption: true },
 		out: { type: "string", demandOption: true },
-		bank: {
+		importer: {
 			type: "string",
+			description: "Path to the importer implementation.",
 			demandOption: true,
-			choices: scanner.choices(),
 		},
-		version: { type: "string", alias: "v", default: DEFAULT_VERSION },
+		exporter: {
+			type: "string",
+			description: "Path to the exporter implementation.",
+			demandOption: true,
+		},
 	})
-	.check((argv) => scanner.get(argv.bank))
 	.parseSync();
 
+async function resolve<T>(path: string): Promise<T> {
+	const module = await import(path);
+	return module.default;
+}
+
 async function main() {
-	const imp = importer.choose("pdf");
-	if (!imp) {
-		throw new UnsupportedFormatError("pdf", importer.choices());
+	const importer = await resolve<importer.Definition>(
+		path.resolve(argv.importer),
+	);
+
+	const exporter = await resolve<exporter.Definition>(
+		path.resolve(argv.exporter),
+	);
+
+	const input = await readFile(path.resolve(argv.in));
+
+	const scan = await importer.run(input);
+	if (scan.isLeft()) {
+		return Promise.resolve(left("Failed to parse"));
 	}
 
-	const inputPath = path.resolve(__dirname, "..", argv.in);
-	const input = Readable.toWeb(fs.createReadStream(inputPath));
-	const statement = await imp.import(input);
+	const serialized = await exporter.run(scan.value);
+	if (serialized.isLeft()) {
+		return Promise.resolve(left("Failed to serialize"));
+	}
 
-	const scan = scanner.run(argv.bank, argv.version, statement);
+	const output = serialized.value;
 
-	const outputPath = path.resolve(__dirname, "..", argv.out);
-	const output = exporter.run(scan, outputPath);
-	await new Disk(outputPath).save(output);
+	await writeFile(argv.out, output);
 }
 
 main().catch(console.error);
