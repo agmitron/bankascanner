@@ -49,6 +49,17 @@
     },
     "./package.json": "./package.json"
   },
+  "typesVersions": {
+    "*": {
+      "importer": ["dist/importer/index.d.ts"],
+      "importer/*": ["dist/importer/*/index.d.ts"],
+      "exporter": ["dist/exporter/index.d.ts"],
+      "exporter/*": ["dist/exporter/*/index.d.ts"],
+      "lib": ["dist/lib/index.d.ts"],
+      "lib/*": ["dist/lib/*.d.ts"],
+      "*": ["dist/*"]
+    }
+  },
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc -b tsconfig.build.json",
