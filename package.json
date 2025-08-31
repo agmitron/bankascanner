@@ -52,7 +52,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc -b tsconfig.build.json",
-    "postbuild": "tsc-alias -p tsconfig.build.src.json && tsc-alias -p tsconfig.build.lib.json",
+    "postbuild": "tsc-alias -p tsconfig.build.src.json --outDir dist && tsc-alias -p tsconfig.build.lib.json --outDir dist/lib",
     "start": "tsx cli",
     "test": "vitest",
     "test:watch": "vitest watch",
